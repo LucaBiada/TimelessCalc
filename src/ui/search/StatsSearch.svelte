@@ -31,7 +31,7 @@
 
   let isGloriousVanity = $derived(jewelType?.name === "vaal");
   let minLabel = $derived.by(() =>
-    $searchStore.statSearchMode === "occurrences" ? "Min" : "Min Value",
+    $searchStore.statSearchMode === "occurrences" ? "Min. nodes" : "Min. value",
   );
 
   function removeStat(index: number) {
@@ -122,11 +122,14 @@
 
 <div class="space-y-4">
   <div class="relative">
+    <label for="stat-search" class="block text-xs font-medium text-ink-muted mb-2">Stats you want</label>
     <input
+      id="stat-search"
       bind:this={inputElement}
       type="text"
       bind:value={searchValue}
-      placeholder="Search for a stat..."
+      placeholder="Type to add a stat, e.g. strength"
+      autocomplete="off"
       oninput={updateFilteredStats}
       onfocus={() => {
         updateFilteredStats();
@@ -137,17 +140,17 @@
         }
       }}
       onblur={handleBlur}
-      class="w-full px-4 py-3 rounded-lg bg-slate-800 border border-slate-600 text-white placeholder-slate-400 focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all duration-200"
+      class="w-full px-3 py-2 rounded-md bg-raised border border-line text-ink placeholder-ink-faint focus:outline-none focus:border-gold transition-colors"
     />
 
     {#if showDropdown}
       <div
-        class="absolute top-full left-0 right-0 mt-1 bg-slate-800 border border-slate-600 rounded-lg shadow-xl z-10 max-h-48 overflow-y-auto"
+        class="absolute top-full left-0 right-0 mt-1 bg-raised border border-line-strong rounded-md shadow-lg shadow-black/40 z-10 max-h-60 overflow-y-auto custom-scrollbar"
       >
         {#if filteredStats.length > 0}
-        {#each filteredStats as stat, i (stat.statKey)}
+          {#each filteredStats as stat (stat.statKey)}
             <button
-              class="w-full px-4 py-3 text-left text-slate-200 hover:bg-blue-600 hover:text-white cursor-pointer transition-all duration-150 border-b border-slate-700 last:border-b-0 {i % 2 !== 1 ? 'bg-slate-700/40' : ''}"
+              class="w-full px-3 py-2 text-left text-sm text-ink hover:bg-hover cursor-pointer transition-colors"
               onmousedown={(e) => {
                 e.preventDefault();
                 selectStat(stat);
@@ -156,133 +159,103 @@
               {stat.label}
             </button>
           {/each}
-        {:else if searchValue}
-          <div class="px-4 py-3 text-slate-400 italic">No stats found</div>
         {:else}
-          <div class="px-4 py-3 text-slate-400 italic">Type to search...</div>
+          <div class="px-3 py-2 text-sm text-ink-faint">No stat matches "{searchValue}"</div>
         {/if}
       </div>
     {/if}
   </div>
 
   {#if isGloriousVanity}
-    <div class="space-y-2">
-      <span
-        class="text-sm font-semibold text-slate-300 uppercase tracking-wider whitespace-nowrap"
-        >Search by</span
-      >
-      <div class="flex bg-slate-800 rounded-lg p-1 border border-slate-700">
-        <button
-          onclick={() => handleStatSearchModeChange("occurrences")}
-          class="flex-1 px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 {$searchStore.statSearchMode ===
-          'occurrences'
-            ? 'bg-blue-600 text-white shadow-md'
-            : 'text-slate-300 hover:text-white hover:bg-slate-700'}"
-        >
-          Occurrences
-        </button>
-        <button
-          onclick={() => handleStatSearchModeChange("totalValue")}
-          class="flex-1 px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 {$searchStore.statSearchMode ===
-          'totalValue'
-            ? 'bg-blue-600 text-white shadow-md'
-            : 'text-slate-300 hover:text-white hover:bg-slate-700'}"
-        >
-          Total Value
-        </button>
+    <div>
+      <div class="text-xs font-medium text-ink-muted mb-2">Rank seeds by</div>
+      <div class="grid grid-cols-2 gap-1 p-1 rounded-md bg-raised border border-line" role="radiogroup">
+        {#each [{ id: "occurrences", label: "Number of nodes" }, { id: "totalValue", label: "Total value" }] as option (option.id)}
+          <button
+            role="radio"
+            aria-checked={$searchStore.statSearchMode === option.id}
+            onclick={() => handleStatSearchModeChange(option.id as StatSearchMode)}
+            class="py-1.5 px-2 rounded text-sm cursor-pointer transition-colors {$searchStore.statSearchMode === option.id
+              ? 'bg-hover text-ink font-medium shadow-[inset_0_-2px_0_var(--color-gold)]'
+              : 'text-ink-muted hover:text-ink'}"
+          >
+            {option.label}
+          </button>
+        {/each}
       </div>
     </div>
   {/if}
 
-  <div class="space-y-2">
-    {#if $searchStore.selectedStats.length > 0}
-      <div
-        class="flex items-center gap-2 px-3 py-1 rounded-lg font-semibold text-slate-300 text-xs"
-      >
-        <span class="flex-1">Stat</span>
-        <span class="w-12 text-center">Exclude</span>
-        <span class="w-16 text-center">Weight</span>
-        <span class="w-16 text-center">{minLabel}</span>
-        <span class="w-8"></span>
-      </div>
-    {/if}
-    {#each $searchStore.selectedStats as stat, i (i)}
-      <div class="flex items-center gap-2 px-3 py-2 bg-slate-800 rounded-lg transition-all duration-200 {stat.exclude ? 'opacity-50' : ''}">
-        <span class="flex-1 text-sm text-slate-200 truncate">{stat.label}</span>
-        <label class="relative inline-flex items-center cursor-pointer w-12 justify-center">
-          <input
-            type="checkbox"
-            class="sr-only peer"
-            checked={stat.exclude || false}
-            oninput={(e) => {
-              const target = e.target as HTMLInputElement;
-              handleExcludeChange(stat, target.checked);
-            }}
-          />
-          <div
-            class="w-9 h-5 bg-slate-600 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-400 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-red-600"
-          ></div>
-        </label>
-        <input
-          type="number"
-          value={stat.weight}
-          oninput={(e) => {
-            const target = e.target as HTMLInputElement;
-            handleWeightChange(stat, parseFloat(target.value) || 0);
-          }}
-          placeholder="Weight"
-          min="0"
-          step="0.1"
-          class="w-16 px-2 py-1.5 text-sm bg-slate-700 border border-slate-600 rounded text-white focus:outline-none focus:border-blue-400"
-        />
-        <input
-          type="number"
-          value={stat.minWeight}
-          oninput={(e) => {
-            const target = e.target as HTMLInputElement;
-            handleMinWeightChange(stat, parseFloat(target.value) || 0);
-          }}
-          placeholder={minLabel}
-          min="0"
-          step="0.1"
-          class="w-16 px-2 py-1.5 text-sm bg-slate-700 border border-slate-600 rounded text-white focus:outline-none focus:border-blue-400"
-        />
-        <button
-          onclick={() => removeStat(i)}
-          aria-label="Remove stat"
-          class="px-2 py-1.5 text-sm bg-red-600/80 hover:bg-red-600 text-white rounded cursor-pointer transition-all duration-200"
-        >
-          <svg
-            class="w-4 h-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-        </button>
-      </div>
-    {/each}
-    {#if $searchStore.selectedStats.length === 0}
-      <p class="text-sm text-slate-400 italic text-center py-4">
-        No stats selected
-      </p>
-    {/if}
-  </div>
+  {#if $searchStore.selectedStats.length === 0}
+    <p class="text-xs text-ink-faint">Add one or more stats. Seeds are ranked by how many of your selected nodes get them, times each stat's weight.</p>
+  {:else}
+    <ul class="space-y-2">
+      {#each $searchStore.selectedStats as stat, i (i)}
+        <li class="rounded-md border border-line bg-raised px-3 py-2.5 {stat.exclude ? 'border-dashed' : ''}">
+          <div class="flex items-start gap-2">
+            <span class="flex-1 text-sm {stat.exclude ? 'text-ink-muted line-through decoration-ink-faint' : 'text-ink'}">{stat.label}</span>
+            <button
+              onclick={() => removeStat(i)}
+              aria-label="Remove {stat.label}"
+              class="-mr-1 -mt-0.5 w-6 h-6 grid place-items-center rounded text-ink-faint hover:text-ink hover:bg-hover cursor-pointer transition-colors"
+            >
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          <div class="mt-2 flex items-center gap-3 text-xs text-ink-muted">
+            {#if !stat.exclude}
+              <label class="flex items-center gap-1.5">
+                Weight
+                <input
+                  type="number"
+                  value={stat.weight}
+                  oninput={(e) => {
+                    const target = e.target as HTMLInputElement;
+                    handleWeightChange(stat, parseFloat(target.value) || 0);
+                  }}
+                  min="0"
+                  step="0.1"
+                  class="w-14 px-2 py-1 text-sm bg-panel border border-line rounded text-ink focus:outline-none focus:border-gold"
+                />
+              </label>
+              <label class="flex items-center gap-1.5">
+                {minLabel}
+                <input
+                  type="number"
+                  value={stat.minWeight}
+                  oninput={(e) => {
+                    const target = e.target as HTMLInputElement;
+                    handleMinWeightChange(stat, parseFloat(target.value) || 0);
+                  }}
+                  min="0"
+                  step="0.1"
+                  class="w-14 px-2 py-1 text-sm bg-panel border border-line rounded text-ink focus:outline-none focus:border-gold"
+                />
+              </label>
+            {:else}
+              <span class="text-ink-faint">Seeds with this stat are left out</span>
+            {/if}
+            <label class="ml-auto flex items-center gap-1.5 cursor-pointer" title="Leave out seeds that put this stat on your nodes">
+              <input
+                type="checkbox"
+                class="w-3.5 h-3.5 accent-[var(--color-gold)] cursor-pointer"
+                checked={stat.exclude || false}
+                oninput={(e) => {
+                  const target = e.target as HTMLInputElement;
+                  handleExcludeChange(stat, target.checked);
+                }}
+              />
+              Exclude
+            </label>
+          </div>
+        </li>
+      {/each}
+    </ul>
 
-  {#if $searchStore.selectedStats.length > 0}
-    <div class="flex items-center gap-3">
-      <label
-        for="minTotalWeight"
-        class="text-sm text-slate-300 whitespace-nowrap"
-      >
-        Min total weight
-      </label>
+    <label class="flex items-center gap-2 text-xs text-ink-muted">
+      Minimum total score
       <input
         id="minTotalWeight"
         type="number"
@@ -294,8 +267,8 @@
         placeholder="0"
         min="0"
         step="0.1"
-        class="flex-1 px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-blue-400"
+        class="w-20 px-2 py-1 text-sm bg-raised border border-line rounded text-ink focus:outline-none focus:border-gold"
       />
-    </div>
+    </label>
   {/if}
 </div>

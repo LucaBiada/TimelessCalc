@@ -54,11 +54,12 @@ const uniqueId = id || `dropdown-${crypto.randomUUID()}`;
 
 {#if loading}
   <div
-    class="w-full py-2.5 px-4 rounded-lg bg-slate-700 border border-slate-600 text-slate-400 font-medium flex items-center justify-between"
+    class="w-full px-3 py-2 rounded-md bg-raised border border-line text-sm text-ink-faint flex items-center justify-between"
   >
     <span>{loadingText}</span>
     <div
-      class="w-4 h-4 border-2 border-slate-500 border-t-blue-400 rounded-full animate-spin"
+      class="w-4 h-4 border-2 border-ink-faint/40 border-t-gold rounded-full animate-spin"
+      aria-hidden="true"
     ></div>
   </div>
 {:else}
@@ -66,7 +67,7 @@ const uniqueId = id || `dropdown-${crypto.randomUUID()}`;
     {#if label}
       <label
         for={uniqueId}
-        class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3 block"
+        class="text-xs font-medium text-ink-muted mb-1.5 block"
       >
         {label}
       </label>
@@ -79,13 +80,13 @@ const uniqueId = id || `dropdown-${crypto.randomUUID()}`;
         onblur={handleBlur}
         aria-expanded={isOpen}
         aria-haspopup="listbox"
-        class="w-full py-2.5 px-4 rounded-lg bg-slate-700 border border-slate-600 text-white text-left font-medium cursor-pointer transition-all duration-200 flex items-center justify-between hover:bg-slate-600 hover:border-slate-500"
+        class="w-full px-3 py-2 rounded-md bg-raised border border-line text-sm text-ink text-left cursor-pointer transition-colors flex items-center justify-between hover:border-line-strong"
       >
         <span class="{truncate ? 'truncate' : ''} text-nowrap"
           >{selectedValue}</span
         >
         <svg
-          class="w-4 h-4 transition-transform duration-200 {isOpen
+          class="w-4 h-4 text-ink-faint transition-transform duration-200 {isOpen
             ? 'rotate-180'
             : ''} flex-shrink-0 ml-2"
           fill="none"
@@ -105,17 +106,17 @@ const uniqueId = id || `dropdown-${crypto.randomUUID()}`;
       {#if isOpen}
         <div
           role="listbox"
-          class="absolute top-full left-0 right-0 mt-1 bg-slate-800 border border-slate-600 rounded-lg shadow-xl z-10 overflow-hidden min-w-[12rem] max-h-60 overflow-y-auto"
+          class="absolute top-full left-0 right-0 mt-1 py-1 bg-raised border border-line-strong rounded-md shadow-lg z-10 min-w-[12rem] max-h-60 overflow-y-auto"
         >
           {#each options as option (option.value)}
             <button
               type="button"
               role="option"
               aria-selected={selectedValue === option.value}
-              class="w-full px-4 py-2.5 text-left cursor-pointer transition-all duration-150 {selectedValue ===
+              class="w-full px-3 py-2 text-left text-sm cursor-pointer transition-colors {selectedValue ===
               option.value
-                ? 'bg-blue-600 text-white'
-                : 'text-slate-200 hover:bg-slate-700'}"
+                ? 'bg-gold-soft text-ink font-medium'
+                : 'text-ink-muted hover:text-ink hover:bg-hover'}"
               onmousedown={(e) =>
                 handleSelectWithPreventDefault(option.value, e)}
             >

@@ -4,6 +4,7 @@
   import { canvas } from "$lib/canvas/canvasContext";
   import { translations } from "$lib/providers/translations";
   import { formatStatTranslation } from "$lib/utils/sidebar/sidebarUtils";
+  import { seedAnalyzerRequest } from "$lib/stores/seedAnalyzerStore";
 
   interface Props {
     seed: number | null;
@@ -69,6 +70,16 @@
     }, 100);
   }
 
+  let validSeed = $derived(
+    !!jewelType && seedInput !== null && seedInput >= jewelType.min && seedInput <= jewelType.max,
+  );
+
+  function compareAllSockets() {
+    if (validSeed && jewelType && seedInput !== null) {
+      seedAnalyzerRequest.set({ seed: seedInput, jewelType });
+    }
+  }
+
   let timelessStats = $derived(
     $treeStore.chosenSocket && $searchStore.seedSearched
       ? getTimelessStats()
@@ -77,45 +88,59 @@
 </script>
 
 <div class="space-y-3">
-  <input
-    type="number"
-    bind:value={seedInput}
-    oninput={handleInput}
-    placeholder="Enter the seed"
-    min="0"
-    step="1"
-    class="w-full px-4 py-3 rounded-lg bg-slate-800 border border-slate-600 text-white placeholder-slate-400 focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all duration-200"
-  />
-  <p class="text-sm text-slate-400">
-    From {jewelType?.min} to {jewelType?.max}
-  </p>
+  <div>
+    <label for="seed-input" class="block text-xs font-medium text-ink-muted mb-2">Seed</label>
+    <input
+      id="seed-input"
+      type="number"
+      bind:value={seedInput}
+      oninput={handleInput}
+      placeholder="{jewelType?.min}–{jewelType?.max}"
+      min={jewelType?.min}
+      max={jewelType?.max}
+      step="1"
+      class="w-full px-3 py-2 rounded-md bg-raised border border-line text-ink placeholder-ink-faint focus:outline-none focus:border-gold transition-colors"
+    />
+    <p class="mt-1.5 text-xs text-ink-faint">
+      The number on your jewel, between {jewelType?.min?.toLocaleString()} and {jewelType?.max?.toLocaleString()}.
+    </p>
+  </div>
+
+  <button
+    type="button"
+    onclick={compareAllSockets}
+    disabled={!validSeed}
+    class="w-full py-2 px-3 rounded-md border border-line text-sm transition-colors {validSeed
+      ? 'text-ink hover:bg-hover hover:border-line-strong cursor-pointer'
+      : 'text-ink-faint cursor-not-allowed'}"
+  >
+    Compare this seed on all sockets
+  </button>
 
   {#if $searchStore.seedSearched && Object.keys(timelessStats).length > 0}
-    <div class="bg-slate-800 rounded-lg p-4">
-      <h4 class="text-sm font-semibold text-white mb-3">Current Stats</h4>
-      <div>
-        {#each Object.entries(timelessStats) as [statKeyStr, data] (statKeyStr)}
-          {@const statKey = parseInt(statKeyStr)}
-          {@const transEntry = translations[statKeyStr]?.[0]}
-          {@const divider = transEntry?.divider ?? 1}
-          {@const displayTotal = data.total / divider}
-          {@const translation =
-            transEntry?.translation?.replace("{0}", "#") || statKey}
-
-          <button
-            class="w-full px-3 py-1 hover:bg-slate-700 rounded cursor-pointer transition-all duration-200 text-sm"
-            onclick={() => highlightNodesWithStat(statKey)}
-          >
-            <div class="flex justify-between text-slate-300">
-              <div>
-                <span class="text-blue-400">({data.count})</span>
-                {translation}
-              </div>
-              <span class="font-semibold">total: [{displayTotal}]</span>
-            </div>
-          </button>
-        {/each}
+    <div>
+      <div class="flex items-baseline justify-between mb-2">
+        <span class="text-xs font-medium text-ink-muted">On your selected nodes</span>
+        <span class="text-xs text-ink-faint">Click a stat to find it on the tree</span>
       </div>
+      <ul class="rounded-md border border-line divide-y divide-line">
+        {#each Object.entries(timelessStats).sort((a, b) => b[1].count - a[1].count) as [statKeyStr, data] (statKeyStr)}
+          {@const statKey = parseInt(statKeyStr)}
+          <li>
+            <button
+              class="w-full flex items-start gap-3 px-3 py-2 text-left text-sm text-ink hover:bg-hover cursor-pointer transition-colors"
+              onclick={() => highlightNodesWithStat(statKey)}
+            >
+              <span class="flex-1">{formatStatTranslation(statKey, data.total, translations)}</span>
+              {#if data.count > 1}
+                <span class="text-xs text-ink-faint pt-0.5" title="Number of nodes with this stat (values summed)">×{data.count}</span>
+              {/if}
+            </button>
+          </li>
+        {/each}
+      </ul>
     </div>
+  {:else if validSeed && $searchStore.seedSearched}
+    <p class="text-xs text-ink-faint">None of your selected nodes change with this seed. Select nodes above to see their new stats.</p>
   {/if}
 </div>

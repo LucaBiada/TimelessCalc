@@ -10,18 +10,16 @@ export interface Point {
 export function centerOnSocket(socket: Node): number {
 	const radius = TREE_CONSTANTS.SOCKET.RADIUS;
 	const margin = 600;
-	const sidebarWidth = window.innerWidth >= 768 ? 650 : 0;
-	const availWidth = window.innerWidth - sidebarWidth;
+	// canvas.state width/height is the tree area next to the docked panel.
+	const { width, height } = canvas.state;
 	const viewportScale = Math.max(
-		((radius + margin) * 2) / availWidth,
-		((radius + margin) * 2) / window.innerHeight,
+		((radius + margin) * 2) / width,
+		((radius + margin) * 2) / height,
 	);
 
 	canvas.state.scaling = viewportScale;
-	canvas.state.offsetX =
-		socket.x - (sidebarWidth + availWidth / 2) * viewportScale;
-	canvas.state.offsetY =
-		socket.y - (window.innerHeight / 2) * viewportScale;
+	canvas.state.offsetX = socket.x - (width / 2) * viewportScale;
+	canvas.state.offsetY = socket.y - (height / 2) * viewportScale;
 
 	return viewportScale;
 }

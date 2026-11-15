@@ -24,6 +24,8 @@
     changeKeystone,
   } from "$lib/utils/search/resetStore";
   import { validateSocket } from "$lib/utils/socketValidation";
+  import { findNearbyKeystone } from "$lib/utils/formatters";
+  import { canvas } from "$lib/canvas/canvasContext";
 
   let seedInput: number | null = $state(null);
   let socketWarningMessage = $state("");
@@ -72,6 +74,20 @@
 
   let conquerorOptions = $derived(getConquerorOptions($searchStore.jewelType));
 
+  // The conqueror only changes the keystone and trade filters, so start on "Any".
+  $effect(() => {
+    if ($searchStore.jewelType && !$searchStore.conqueror && conquerorOptions[0]) {
+      const any = conquerorOptions[0];
+      searchStore.update((s) => ({ ...s, conqueror: any }));
+    }
+  });
+
+  let socketName = $derived(
+    $treeStore.chosenSocket
+      ? findNearbyKeystone($treeStore.chosenSocket, canvas.treeData.nodes, canvas.treeData)
+      : "",
+  );
+
   async function handleSearch() {
     await performSearch(
       $searchStore.mode,
@@ -115,59 +131,76 @@
   }
 </script>
 
-<div class="relative min-h-[200px]">
+<div class="relative">
   {#if $searchStore.loading && $searchStore.mode === "stats"}
-    <div
-      class="absolute inset-0 bg-slate-900/90 backdrop-blur-md z-20 flex items-center justify-center rounded-lg"
-    >
-      <Spinner text="Loading results..." />
+    <div class="absolute inset-0 bg-panel/90 z-20 flex items-center justify-center rounded-md">
+      <Spinner text="Searching seeds..." />
     </div>
   {/if}
 
-  <div
-    class="space-y-6 {$searchStore.loading && $searchStore.mode === 'stats'
-      ? 'opacity-50 pointer-events-none'
-      : ''}"
-  >
-    <section>
-      <JewelTypeSelector bind:jewelType={$searchStore.jewelType} />
-    </section>
-
-    {#if $searchStore.jewelType}
+  {#if !$treeStore.chosenSocket}
+    <div class="rounded-md border border-dashed border-line-strong px-4 py-6 text-center">
+      <p class="text-sm text-ink font-medium">Click a jewel socket on the tree to start</p>
+      <p class="mt-1 text-xs text-ink-muted">Sockets are the round slots with a purple ring.</p>
+    </div>
+  {:else}
+    <div
+      class="space-y-5 {$searchStore.loading && $searchStore.mode === 'stats'
+        ? 'opacity-50 pointer-events-none'
+        : ''}"
+    >
       <section>
-        <ConquerorSelector
-          bind:conqueror={$searchStore.conqueror}
-          options={conquerorOptions}
-        />
+        <div class="text-xs font-medium text-ink-muted mb-1">Socket</div>
+        <div class="text-sm text-ink">Near {socketName}</div>
+        <div class="mt-0.5 text-xs text-ink-faint">Click another socket to switch, or this one again to clear it.</div>
       </section>
 
-      {#if $searchStore.conqueror}
+      <section>
+        <NodeToggles />
+      </section>
+
+      <section>
+        <JewelTypeSelector bind:jewelType={$searchStore.jewelType} />
+      </section>
+
+      {#if $searchStore.jewelType}
         <section>
-          <ModeSelector
-            mode={$searchStore.mode}
-            disabled={!$searchStore.jewelType}
-            onselectmode={setMode}
+          <ConquerorSelector
+            bind:conqueror={$searchStore.conqueror}
+            options={conquerorOptions}
           />
         </section>
 
-        {#if $searchStore.mode === "seed"}
-          <SeedSearch bind:seed={seedInput} onapplyseed={handleSeedInput} />
-        {/if}
+        {#if $searchStore.conqueror}
+          <section>
+            <ModeSelector
+              mode={$searchStore.mode}
+              disabled={!$searchStore.jewelType}
+              onselectmode={setMode}
+            />
+          </section>
 
-        {#if $searchStore.mode === "stats"}
-          <StatsSearch jewelType={$searchStore.jewelType} />
-          <button
-            onclick={() => checkSocketAndSearch(handleSearch)}
-            class="w-full py-3 px-4 bg-green-600 hover:bg-green-500 text-white rounded-lg font-semibold text-lg cursor-pointer transition-all duration-200 shadow-lg shadow-green-500/20"
-          >
-            Search
-          </button>
+          {#if $searchStore.mode === "seed"}
+            <section>
+              <SeedSearch bind:seed={seedInput} onapplyseed={handleSeedInput} />
+            </section>
+          {/if}
+
+          {#if $searchStore.mode === "stats"}
+            <section class="space-y-4">
+              <StatsSearch jewelType={$searchStore.jewelType} />
+              <button
+                onclick={() => checkSocketAndSearch(handleSearch)}
+                class="w-full py-2.5 px-4 bg-gold hover:bg-gold-strong text-on-gold rounded-md font-semibold cursor-pointer transition-colors"
+              >
+                Search seeds
+              </button>
+            </section>
+          {/if}
         {/if}
       {/if}
-    {/if}
-
-    <NodeToggles />
-  </div>
+    </div>
+  {/if}
 </div>
 
 {#if socketWarningMessage}

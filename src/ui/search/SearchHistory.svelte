@@ -55,90 +55,52 @@
   }
 </script>
 
-<div class="space-y-4">
-  <div class="text-sm text-slate-400">
-    Previous searches are saved automatically when you search.
+{#if $historyStore.length === 0}
+  <div class="rounded-md border border-dashed border-line px-4 py-6 text-center">
+    <p class="text-sm text-ink-muted">Your stat searches will appear here.</p>
+    <p class="text-xs text-ink-faint mt-1">The last 10 are kept automatically.</p>
   </div>
+{:else}
+  <ul class="rounded-md border border-line divide-y divide-line">
+    {#each $historyStore as entry (entry.id)}
+      <li class="px-3 py-2 hover:bg-hover">
+        <div class="flex items-start gap-2">
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-medium text-ink truncate">
+              {findNearbyKeystone(entry.socket, treeNodes, treeData)}
+            </p>
+            <p class="text-xs text-ink-muted truncate">
+              {entry.jewelType.label}, {entry.conqueror?.label || "any conqueror"}
+            </p>
+            <p class="text-xs text-ink-muted mt-1">{formatStats(entry.stats)}</p>
+            {#if formatExcludedStats(entry.stats)}
+              <p class="text-xs text-danger">{formatExcludedStats(entry.stats)}</p>
+            {/if}
+            <p class="text-xs text-ink-faint mt-1">
+              {entry.allocatedSkillIds?.length || 0} nodes, min weight {entry.minTotalWeight}. {formatDate(entry.timestamp)}
+            </p>
+          </div>
 
-  {#if $historyStore.length === 0}
-    <div class="bg-slate-800 rounded-lg p-8 text-center">
-      <p class="text-slate-400 italic">No search history yet.</p>
-      <p class="text-slate-500 text-sm mt-2">
-        Search configurations will appear here automatically.
-      </p>
-    </div>
-  {:else}
-    <div class="space-y-3">
-      {#each $historyStore as entry (entry.id)}
-        <div class="bg-slate-800 rounded-lg p-4 border border-slate-700">
-          <div class="flex items-start justify-between gap-3">
-            <div class="flex-1 min-w-0">
-              <div class="flex items-center gap-2 mb-2">
-                <span class="text-sm font-medium text-slate-200 truncate">
-                  {findNearbyKeystone(entry.socket, treeNodes, treeData)}
-                </span>
-                <span class="text-xs text-slate-500">•</span>
-                <span class="text-sm text-slate-300 truncate">
-                  {entry.jewelType.label}
-                </span>
-                {#if entry.conqueror}
-                  <span class="text-xs text-slate-500">•</span>
-                  <span class="text-sm text-slate-300 truncate">
-                    {entry.conqueror.label}
-                  </span>
-                {/if}
-              </div>
-
-              <div class="text-xs text-slate-400 mb-1">
-                {formatStats(entry.stats)}
-              </div>
-
-              {#if formatExcludedStats(entry.stats)}
-                <div class="text-xs text-red-300 mb-1">
-                  {formatExcludedStats(entry.stats)}
-                </div>
-              {/if}
-
-              <div class="flex items-center gap-4 text-xs text-slate-500">
-                <span>{entry.allocatedSkillIds?.length || 0} allocated</span>
-                <span>Min weight: {entry.minTotalWeight}</span>
-                <span>{formatDate(entry.timestamp)}</span>
-              </div>
-            </div>
-
-            <div class="flex gap-2 flex-shrink-0">
-              <button
-                onclick={() => handleLoadEntry(entry)}
-                class="px-3 py-1.5 text-sm bg-blue-600 hover:bg-blue-500 text-white rounded cursor-pointer transition-all duration-200"
-              >
-                Load
-              </button>
-              <button
-                onclick={() => handleDeleteEntry(entry.id)}
-                class="px-3 py-1.5 text-sm bg-red-600/80 hover:bg-red-600 text-white rounded cursor-pointer transition-all duration-200"
-                aria-label="Delete search"
-              >
-                <svg
-                  class="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                  />
+          <div class="flex items-center gap-1 shrink-0">
+            <button
+              onclick={() => handleDeleteEntry(entry.id)}
+              class="w-8 h-8 grid place-items-center rounded-md text-ink-muted hover:text-danger hover:bg-hover cursor-pointer transition-colors"
+              aria-label="Delete search"
+              title="Delete"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                 </svg>
-              </button>
-            </div>
+            </button>
+            <button onclick={() => handleLoadEntry(entry)} class="py-1.5 px-3 rounded-md border border-line text-sm text-ink hover:bg-hover hover:border-line-strong cursor-pointer transition-colors">
+              Load
+            </button>
           </div>
         </div>
-      {/each}
-    </div>
-  {/if}
-</div>
+      </li>
+    {/each}
+  </ul>
+{/if}
 
 {#if showConfirmModal}
   <Modal

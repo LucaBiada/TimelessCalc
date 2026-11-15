@@ -14,12 +14,16 @@
     onclose: () => void;
     onresults: (results: SeedSearchResults) => void;
     triggerPaste: boolean;
+    initial?: { seed: number; jewelType: JewelType } | null;
   }
 
-  let { onclose, onresults, triggerPaste = false }: Props = $props();
+  let { onclose, onresults, triggerPaste = false, initial = null }: Props = $props();
 
-  let seedInput = $state("");
-  let selectedJewelType = $state<JewelType | null>(null);
+  let seedInput = $state(initial ? String(initial.seed) : "");
+  // jewelTypes entries are compared by identity in the radio group, so map back to the constant.
+  let selectedJewelType = $state<JewelType | null>(
+    initial ? (jewelTypes.find((j) => j.name === initial.jewelType.name) ?? null) : null,
+  );
   let results = $state<Record<string, SocketResult> | null>(null);
   let error = $state<string | null>(null);
   let searchTimeout: number | null = $state(null);
@@ -32,6 +36,7 @@
   }
 
   onMount(async () => {
+    if (initial) analyzeSeed();
     try {
       if (triggerPaste) {
         const text = await navigator.clipboard.readText();
@@ -76,12 +81,12 @@
   async function analyzeSeed() {
     const seed = parseInt(seedInput, 10);
     if (isNaN(seed)) {
-      error = "Please enter a valid seed number";
+      error = "Enter a seed number.";
       return;
     }
 
     if (!selectedJewelType) {
-      error = "Please select a jewel type";
+      error = "Choose a jewel type.";
       return;
     }
     if (
@@ -183,7 +188,7 @@
       onresults(seedResults);
     } catch (e) {
       const errorMessage = e instanceof Error ? e.message : "Unknown error";
-      error = `Failed to analyze seed: ${errorMessage}`;
+      error = `Couldn't analyze this seed: ${errorMessage}`;
     }
   }
 
@@ -208,12 +213,12 @@
     }
   }
 
-  function handlePaste(e) {
+  function handlePaste(e: ClipboardEvent) {
     e.preventDefault();
     const hasClipboardData = 'clipboardData' in e && e.clipboardData !== null;
     if (!hasClipboardData) return;
 
-    const text = e.clipboardData.getData("text");
+    const text = e.clipboardData?.getData("text");
     if (text) {
       const parsed = parseClipboard(text);
       if (parsed) {
@@ -226,122 +231,141 @@
   }
 </script>
 
+<svelte:window onkeydown={handleKeydown} />
+
 <div
-  class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[1000] flex items-center justify-center p-4"
+  class="fixed inset-0 bg-black/60 z-[1000] flex items-center justify-center p-4"
   role="dialog"
   aria-modal="true"
+  aria-labelledby="seed-compare-title"
   tabindex="0"
-  onkeydown={handleKeydown}
 >
-  <div
-    class="bg-slate-800 flex flex-col w-full h-full"
-  >
-    <div class="flex justify-between items-center p-6 border-b border-slate-700">
-      <h2 class="text-2xl font-semibold text-blue-400">Analyze Seed</h2>
+  <div class="bg-panel border border-line rounded-lg w-full max-w-6xl h-full max-h-[90vh] flex flex-col">
+    <div class="px-5 py-4 border-b border-line flex items-center justify-between shrink-0">
+      <h2 id="seed-compare-title" class="text-base font-semibold text-ink">Compare seed on all sockets</h2>
       <button
+        type="button"
         onclick={onclose}
-        class="text-slate-400 hover:text-white transition-colors text-2xl cursor-pointer"
+        class="w-8 h-8 grid place-items-center rounded-md text-ink-muted hover:text-ink hover:bg-hover cursor-pointer transition-colors"
         aria-label="Close"
       >
-        ×
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 18L18 6M6 6l12 12" />
+        </svg>
       </button>
     </div>
 
-    <div class="bg-slate-900 p-6">
-      <div class="flex flex-wrap items-center gap-4 mb-4">
-        <div class="flex-1 min-w-[200px]">
+    <div class="px-5 py-4 border-b border-line shrink-0">
+      <div class="flex flex-wrap items-start gap-4">
+        <div class="flex-1 min-w-[200px] max-w-xs">
+          <label for="seed-compare-input" class="text-xs font-medium text-ink-muted mb-1.5 block">Seed</label>
           <div class="relative">
             <input
+              id="seed-compare-input"
               type="number"
               bind:value={seedInput}
               oninput={handleInput}
               onpaste={handlePaste}
-              class="w-full bg-slate-700 text-white border border-slate-600 rounded-lg px-4 py-2 pr-10 focus:outline-none focus:border-blue-500 transition-colors"
+              class="w-full px-3 py-2 pr-10 rounded-md bg-raised border border-line text-ink placeholder-ink-faint focus:border-gold transition-colors"
               placeholder="Enter seed"
               step="1"
             />
             <button
+              type="button"
               onclick={parseClipboardAndFill}
-              class="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition-colors p-1"
-              title="Paste from clipboard (Ctrl+V)"
+              class="absolute right-1 top-1/2 -translate-y-1/2 w-8 h-8 grid place-items-center rounded-md text-ink-muted hover:text-ink hover:bg-hover cursor-pointer transition-colors"
+              aria-label="Paste jewel from clipboard"
+              title="Paste jewel from clipboard (Ctrl+V)"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
-                <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h2zm-3-1a1.5 1.5 0 0 0-1.5 1.5v1a1.5 1.5 0 0 0 1.5 1.5h2a1.5 1.5 0 0 0 1.5-1.5v-1a1.5 1.5 0 0 0-1.5-1.5h-2z"/>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="8" y="2" width="8" height="4" rx="1" />
+                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
               </svg>
             </button>
           </div>
-          <p class="text-xs text-slate-400 mt-1">
-            {selectedJewelType ? `Range: ${selectedJewelType.min.toLocaleString()} - ${selectedJewelType.max.toLocaleString()}` : 'Select jewel type'}
+          <p class="text-xs text-ink-faint mt-1.5">
+            {selectedJewelType ? `Valid seeds: ${selectedJewelType.min.toLocaleString()} to ${selectedJewelType.max.toLocaleString()}` : "Choose a jewel type, or paste a copied jewel."}
           </p>
         </div>
 
-        <div class="flex gap-2 items-center">
-          {#each jewelTypes as jewel (jewel.name)}
-            <label class="relative cursor-pointer">
-              <input
-                type="radio"
-                bind:group={selectedJewelType}
-                value={jewel}
-                class="sr-only"
-              />
-              <RadioButton
-                _value={jewel}
-                label={jewel.label}
-                isSelected={selectedJewelType?.name === jewel.name}
-                size="lg"
-                onclick={() => {
-                  selectedJewelType = jewel;
-                  analyzeSeed();
-                }}
-              />
-            </label>
-          {/each}
+        <div class="flex-[2] min-w-[280px]">
+          <span class="text-xs font-medium text-ink-muted mb-1.5 block">Jewel</span>
+          <div class="grid grid-cols-3 lg:grid-cols-6 gap-2">
+            {#each jewelTypes as jewel (jewel.name)}
+              <label class="relative cursor-pointer">
+                <input
+                  type="radio"
+                  bind:group={selectedJewelType}
+                  value={jewel}
+                  class="sr-only"
+                />
+                <RadioButton
+                  _value={jewel}
+                  label={jewel.label}
+                  isSelected={selectedJewelType?.name === jewel.name}
+                  size="md"
+                  onclick={() => {
+                    selectedJewelType = jewel;
+                    analyzeSeed();
+                  }}
+                />
+              </label>
+            {/each}
+          </div>
         </div>
       </div>
 
       {#if error}
-        <div class="mt-4 p-4 bg-red-900/30 border border-red-700 rounded-lg text-red-300">
+        <p class="mt-3 px-3 py-2 rounded-md bg-danger-soft border border-danger text-sm text-danger" role="alert">
           {error}
-        </div>
+        </p>
       {/if}
     </div>
 
     {#if results && Object.keys(results).length > 0}
-      <div class="flex-1 overflow-y-auto custom-scrollbar p-6">
-        <div class="grid grid-cols-4 gap-4">
+      <div class="flex-1 overflow-y-auto custom-scrollbar px-5 py-4">
+        <p class="text-xs text-ink-faint mb-3">
+          Each number is how many nodes in that socket's radius get the stat. Brighter rows replace a node's stats; dimmer rows add to them.
+        </p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
           {#each Object.entries(results).sort(([a], [b]) => a.localeCompare(b, undefined, {numeric: true})) as [socketId, socketResult] (socketId)}
-            <div class="bg-slate-900 rounded-lg p-4 border border-slate-700">
-              <h4 class="text-sm font-semibold text-blue-300 mb-1">Socket {socketId}: {findNearbyKeystone(canvas.treeData.nodes[socketId], canvas.treeData.nodes, canvas.treeData)}</h4>
-              {#if canvas.treeData.nodes[socketId]?.expansionJewel}
-                <p class="text-xs text-amber-400 font-medium mb-2">/!\ Cluster Jewel</p>
-              {/if}
+            <div class="rounded-md border border-line bg-raised">
+              <div class="px-3 py-2 border-b border-line">
+                <h4 class="text-sm font-medium text-ink truncate">{findNearbyKeystone(canvas.treeData.nodes[socketId], canvas.treeData.nodes, canvas.treeData)}</h4>
+                <p class="text-xs text-ink-faint">
+                  Socket {socketId}{#if canvas.treeData.nodes[socketId]?.expansionJewel}, cluster jewel socket{/if}
+                </p>
+              </div>
 
               {#if socketResult.replacements.length > 0 || socketResult.additions.length > 0}
-                <div>
+                <ul class="py-1">
                   {#each socketResult.replacements as mod (mod.statKey)}
-                    <div class="px-1 py-0.5 hover:bg-slate-800 rounded text-sm">
-                      <span class="text-green-400">({mod.occurrenceCount})</span>
-                      <span class="text-slate-300"> {mod.statLabel}</span>
-                    </div>
+                    <li class="px-3 py-1 flex gap-2 text-sm text-ink hover:bg-hover">
+                      <span class="tabular-nums font-medium w-5 shrink-0 text-right">{mod.occurrenceCount}</span>
+                      <span>{mod.statLabel}</span>
+                    </li>
                   {/each}
                   {#each socketResult.additions as mod (mod.statKey)}
-                    <div class="px-1 py-0.5 hover:bg-slate-800 rounded text-sm">
-                      <span class="text-blue-400">({mod.occurrenceCount})</span>
-                      <span class="text-slate-300"> {mod.statLabel}</span>
-                    </div>
+                    <li class="px-3 py-1 flex gap-2 text-sm text-ink-muted hover:bg-hover">
+                      <span class="tabular-nums w-5 shrink-0 text-right">{mod.occurrenceCount}</span>
+                      <span>{mod.statLabel}</span>
+                    </li>
                   {/each}
-                </div>
+                </ul>
               {:else}
-                <div class="text-slate-500 italic text-sm">No modifications</div>
+                <p class="px-3 py-2 text-sm text-ink-faint">No changes in this socket.</p>
               {/if}
             </div>
           {/each}
         </div>
       </div>
     {:else if results}
-      <div class="flex-1 flex items-center justify-center">
-        <div class="text-slate-400">No modifications found for this seed</div>
+      <div class="flex-1 grid place-items-center text-sm text-ink-muted">
+        This seed changes no nodes.
+      </div>
+    {:else}
+      <div class="flex-1 grid place-items-center text-sm text-ink-faint px-5 text-center">
+        Enter a seed and choose a jewel to see what it does in every socket.
       </div>
     {/if}
   </div>

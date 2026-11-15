@@ -2,15 +2,10 @@
   let { text = "Loading..." }: { text?: string } = $props();
 </script>
 
-<div class="flex flex-col items-center gap-4">
+<div class="flex flex-col items-center gap-3" role="status">
   <div
-    class="w-10 h-10 border-3 border-slate-500 border-t-blue-400 rounded-full animate-spin"
+    class="w-8 h-8 border-2 border-ink-faint/40 border-t-gold rounded-full animate-spin"
+    aria-hidden="true"
   ></div>
-  <span class="text-slate-200 text-lg font-medium">{text}</span>
+  <span class="text-sm text-ink-muted">{text}</span>
 </div>
-
-<style>
-  .border-3 {
-    border-width: 3px;
-  }
-</style>

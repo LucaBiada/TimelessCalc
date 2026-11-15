@@ -46,15 +46,22 @@ let cachedTreeState: TreeStore = { chosenSocket: null, allocated: new Map(), loc
 let cachedSearchState: SearchStore = { jewelType: null, conqueror: null, seed: null, selectedStats: [], searched: false, statsResults: {}, statKeyColors: {}, minTotalWeight: 0, statSearchMode: "occurrences", league: defaultLeague, platform: "PC", currentPage: 0, totalResults: 0, orderedSeeds: [], lastTradeInfo: null, loading: false, mode: null, statsSearched: false, seedSearched: false, automated: false, jewelLoadError: null };
 let { onRender = () => {} } = $props();
 
-onMount(() => {
-	const handleResize = () => {
-		canvasWidth = window.innerWidth;
-		canvasHeight = window.innerHeight;
-		canvas.state.width = canvasWidth;
-		canvas.state.height = canvasHeight;
-	};
-	window.addEventListener("resize", handleResize);
+// The canvas fills the area next to the docked panel; the wrapper's size drives it.
+let wrapperEl: HTMLDivElement;
+let wrapperWidth = $state(0);
+let wrapperHeight = $state(0);
+$effect(() => {
+	if (!wrapperWidth || !wrapperHeight) return;
+	// Keep the view centred when the panel opens or closes.
+	if (canvasWidth) canvas.state.offsetX -= ((wrapperWidth - canvasWidth) / 2) * canvas.state.scaling;
+	if (canvasHeight) canvas.state.offsetY -= ((wrapperHeight - canvasHeight) / 2) * canvas.state.scaling;
+	canvasWidth = wrapperWidth;
+	canvasHeight = wrapperHeight;
+	canvas.state.width = wrapperWidth;
+	canvas.state.height = wrapperHeight;
+});
 
+onMount(() => {
 	const unsubTree = treeStore.subscribe((v) => {
 		cachedTreeState = v;
 		if (Math.abs(canvas.state.scaling - v.scale) > 0.001) {
@@ -66,8 +73,10 @@ onMount(() => {
 	});
 
 	(async () => {
-		canvasWidth = window.innerWidth;
-		canvasHeight = window.innerHeight;
+		canvasWidth = wrapperEl.clientWidth;
+		canvasHeight = wrapperEl.clientHeight;
+		canvas.state.width = canvasWidth;
+		canvas.state.height = canvasHeight;
 
 		canvas.treeData = JSON.parse(JSON.stringify(treeData));
 		canvas.skillIndex = buildSkillIndex(canvas.treeData.nodes);
@@ -83,9 +92,9 @@ onMount(() => {
 		const centerX = (minX + maxX) / 2;
 		const centerY = (minY + maxY) / 2;
 		canvas.state.offsetX =
-			centerX - (window.innerWidth / 2) * canvas.state.scaling;
+			centerX - (canvasWidth / 2) * canvas.state.scaling;
 		canvas.state.offsetY =
-			centerY - (window.innerHeight / 2) * canvas.state.scaling;
+			centerY - (canvasHeight / 2) * canvas.state.scaling;
 
 		if (cachedTreeState.chosenSocket) {
 			const viewportScale = centerOnSocket(cachedTreeState.chosenSocket);
@@ -98,14 +107,14 @@ onMount(() => {
 	})();
 
 	return () => {
-		window.removeEventListener("resize", handleResize);
 		unsubTree();
 		unsubSearch();
 	};
 });
 
 let hoverThrottle: number | null = null;
-function checkHover(mouseX: number, mouseY: number) {
+// mouseX/Y are canvas-local (hit testing); clientX/Y are viewport coords (tooltip placement).
+function checkHover(mouseX: number, mouseY: number, clientX: number, clientY: number) {
 	if (hoverThrottle) return;
 	hoverThrottle = requestAnimationFrame(() => {
 		hoverThrottle = null;
@@ -136,11 +145,11 @@ function checkHover(mouseX: number, mouseY: number) {
 		if (closestNode?.skill !== canvas.state.hoveredNode?.skill) {
 			canvas.state.hoveredNode = closestNode;
 			treeStore.update((s) => ({ ...s, hovered: closestNode }));
-			mouseStore.set({ x: mouseX, y: mouseY });
+			mouseStore.set({ x: clientX, y: clientY });
 
 			cursorStyle = closestNode?.isJewelSocket ? "pointer" : "default";
 		} else {
-			mouseStore.set({ x: mouseX, y: mouseY });
+			mouseStore.set({ x: clientX, y: clientY });
 		}
 	});
 }
@@ -172,8 +181,6 @@ function handleNodeClick(node: Node, event: MouseEvent) {
 	const isCtrlClick = event.ctrlKey || event.metaKey;
 
 	if (node.isJewelSocket) {
-		const socketNodes = canvas.treeData.socketNodes[node.skill];
-
 		if (chosenSocket?.skill === node.skill) {
 			cleanupSeedModifications();
 			treeStore.update((s) => {
@@ -186,16 +193,8 @@ function handleNodeClick(node: Node, event: MouseEvent) {
 			cleanupSeedModifications();
 			treeStore.update((s) => {
 				s.chosenSocket = node;
-				const newAllocated = new Map<string, Node>();
-				if (socketNodes) {
-					for (const nodeId of socketNodes) {
-						const targetNode = canvas.treeData.nodes[nodeId];
-						if (targetNode) {
-							newAllocated.set(nodeId, targetNode);
-						}
-					}
-				}
-				s.allocated = newAllocated;
+				// Start empty; the sidebar's All/Notable/Small buttons select nodes in bulk.
+				s.allocated = new Map();
 				s.locked = new Map();
 				return s;
 			});
@@ -242,7 +241,7 @@ function handlePointerDown(event: PointerEvent) {
 }
 
 function handlePointerMove(event: PointerEvent) {
-	checkHover(event.offsetX, event.offsetY);
+	checkHover(event.offsetX, event.offsetY, event.clientX, event.clientY);
 
 	if (canvas.state.isDragging) {
 		const dx = event.offsetX - canvas.state.dragStartX;
@@ -783,16 +782,19 @@ const render = ({ context, width, height }: RenderParams) => {
 };
 </script>
 
-{#if isInitialized && canvasWidth && canvasHeight}
-  <div
-    style="position: fixed; inset: 0; background: #070c11; overflow: hidden; cursor: {cursorStyle}"
-    onpointerdown={handlePointerDown}
-    onpointermove={handlePointerMove}
-    onpointerup={handlePointerUp}
-    onwheel={handleWheel}
-  >
+<div
+  bind:this={wrapperEl}
+  bind:clientWidth={wrapperWidth}
+  bind:clientHeight={wrapperHeight}
+  style="position: fixed; top: 0; right: 0; bottom: 0; left: var(--panel-offset); background: var(--color-canvas); overflow: hidden; cursor: {cursorStyle}"
+  onpointerdown={handlePointerDown}
+  onpointermove={handlePointerMove}
+  onpointerup={handlePointerUp}
+  onwheel={handleWheel}
+>
+  {#if isInitialized && canvasWidth && canvasHeight}
     <Canvas width={canvasWidth} height={canvasHeight} autoplay={true}>
       <Layer {render} />
     </Canvas>
-  </div>
-{/if}
+  {/if}
+</div>

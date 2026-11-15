@@ -12,14 +12,14 @@
 
   const classes =
     variant === "primary"
-      ? "bg-blue-600 hover:bg-blue-500 text-white"
-      : "bg-blue-600/50 hover:bg-blue-600/70 text-blue-200";
+      ? "border-line text-ink hover:bg-hover hover:border-line-strong"
+      : "border-transparent text-ink-muted hover:text-ink hover:bg-hover";
 </script>
 
 <button
   type="button"
   {onclick}
-  class="px-2 py-1 rounded text-xs font-medium cursor-pointer transition-all duration-200 {classes}"
+  class="px-2 py-1 rounded border text-xs font-medium cursor-pointer transition-colors {classes}"
 >
   {@render children()}
 </button>

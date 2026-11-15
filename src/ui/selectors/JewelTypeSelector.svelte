@@ -70,32 +70,16 @@
   });
 </script>
 
-<div class="mb-4">
-  <span
-    class="text-sm font-semibold text-slate-400 uppercase tracking-wider whitespace-nowrap"
-    >Jewel Type</span
-  >
-</div>
-<div class="grid grid-cols-6 gap-3 items-stretch">
+<div class="text-xs font-medium text-ink-muted mb-2">Jewel</div>
+<div class="grid grid-cols-3 gap-1.5">
   {#each jewelTypes as jewel (jewel.name)}
-    <label class="relative cursor-pointer h-full">
-      <input
-        type="radio"
-        bind:group={jewelType}
-        value={jewel}
-        class="sr-only"
-      />
-      <div class="flex items-center justify-center h-full">
-        <RadioButton
-          _value={jewel}
-          label={jewel.label}
-          isSelected={jewelType === jewel}
-          size="lg"
-          onclick={() => {
-            jewelType = jewel;
-          }}
-        />
-      </div>
-    </label>
+    <RadioButton
+      _value={jewel}
+      label={jewel.label}
+      isSelected={jewelType?.name === jewel.name}
+      onclick={() => {
+        jewelType = jewel;
+      }}
+    />
   {/each}
 </div>

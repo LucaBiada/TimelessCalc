@@ -33,41 +33,47 @@
   }
 </script>
 
+<svelte:window onkeydown={(e) => e.key === "Escape" && onCancel()} />
+
 <div
-  class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+  class="fixed inset-0 bg-black/60 z-[1000] flex items-center justify-center p-4"
   role="dialog"
   aria-modal="true"
+  aria-labelledby="save-favorite-title"
   tabindex="-1"
   onclick={handleBackdropClick}
   onkeydown={(e) => e.key === "Escape" && onCancel()}
 >
-  <div
-    class="bg-slate-800 rounded-xl shadow-2xl p-6 max-w-md w-full border border-slate-700"
-  >
-    <h3 class="text-slate-200 text-lg font-semibold mb-4">Save to Favorites</h3>
-    <input
-      bind:this={inputElement}
-      bind:value={name}
-      type="text"
-      placeholder={suggestedName}
-      class="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-4"
-      onkeydown={handleKeydown}
-    />
-    <div class="flex gap-3">
-      <button
-        type="button"
-        onclick={handleSave}
-        class="flex-1 py-2 px-4 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-medium cursor-pointer transition-all duration-200"
-      >
-        Save
-      </button>
+  <div class="bg-panel border border-line rounded-lg w-full max-w-md">
+    <div class="px-5 py-4 border-b border-line flex items-center justify-between">
+      <h3 id="save-favorite-title" class="text-base font-semibold text-ink">Save favorite</h3>
       <button
         type="button"
         onclick={onCancel}
-        class="flex-1 py-2 px-4 bg-slate-600 hover:bg-slate-500 text-white rounded-lg font-medium cursor-pointer transition-all duration-200"
+        class="w-8 h-8 grid place-items-center rounded-md text-ink-muted hover:text-ink hover:bg-hover cursor-pointer transition-colors"
+        aria-label="Close"
       >
-        Cancel
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 18L18 6M6 6l12 12" />
+        </svg>
       </button>
+    </div>
+    <div class="px-5 py-4">
+      <label for="favorite-name" class="text-xs font-medium text-ink-muted mb-1.5 block">Name</label>
+      <input
+        id="favorite-name"
+        bind:this={inputElement}
+        bind:value={name}
+        type="text"
+        placeholder={suggestedName}
+        class="w-full px-3 py-2 rounded-md bg-raised border border-line text-ink placeholder-ink-faint focus:border-gold transition-colors"
+        onkeydown={handleKeydown}
+      />
+      <p class="text-xs text-ink-faint mt-1.5">Leave empty to use the suggested name.</p>
+    </div>
+    <div class="px-5 py-3 border-t border-line flex justify-end gap-2">
+      <button type="button" onclick={onCancel} class="py-2 px-3 rounded-md border border-line text-sm text-ink hover:bg-hover hover:border-line-strong cursor-pointer transition-colors">Cancel</button>
+      <button type="button" onclick={handleSave} class="py-2 px-4 bg-gold hover:bg-gold-strong text-on-gold rounded-md text-sm font-semibold cursor-pointer transition-colors">Save favorite</button>
     </div>
   </div>
 </div>

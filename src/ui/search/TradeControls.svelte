@@ -41,27 +41,40 @@
     if (showTooltip && tooltipButton) {
       const rect = tooltipButton.getBoundingClientRect();
       const pos = {
-        top: (rect?.top || 60) + 50,
-        left: (rect?.left || 200) + 30,
+        top: (rect?.bottom || 60) + 8,
+        left: Math.max(8, (rect?.right || 200) - 256),
       };
       ontargetposition?.(pos);
     }
   }
 </script>
 
-<div class="flex flex-wrap gap-2 items-center">
-  <div class="w-36">
-    {@render league?.()}
-  </div>
-  <div class="w-22">
-    {@render platform?.()}
-  </div>
+<div class="flex items-baseline justify-between mb-2">
+  <span class="text-xs font-medium text-ink-muted">Find these seeds on the trade site</span>
+  <button
+    type="button"
+    bind:this={tooltipButton}
+    onmouseenter={handleMouseEnter}
+    onmouseleave={handleMouseLeave}
+    onfocus={handleMouseEnter}
+    onblur={handleMouseLeave}
+    aria-label="How trade pages work"
+    class="text-xs text-ink-faint hover:text-ink underline decoration-dotted underline-offset-2 cursor-help"
+  >
+    How pages work
+  </button>
+</div>
+<div class="grid grid-cols-[1fr_auto] gap-2 mb-2">
+  <div>{@render league?.()}</div>
+  <div class="w-24">{@render platform?.()}</div>
+</div>
+<div class="flex gap-2">
   <button
     type="button"
     onclick={ontrade}
-    class="h-[46px] px-3 py-2.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-white text-sm font-medium cursor-pointer transition-all duration-200"
+    class="flex-1 py-2 px-3 bg-gold hover:bg-gold-strong text-on-gold rounded-md text-sm font-semibold cursor-pointer transition-colors"
   >
-    Trade
+    Open trade search
   </button>
   {#if hasTraded && $searchStore.totalResults > 0}
     {@const seedsPerPage = getSeedsPerPage(jewelType!, conqueror)}
@@ -72,27 +85,10 @@
       <button
         type="button"
         onclick={onnext}
-        class="h-[46px] px-3 py-2.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-white text-sm font-medium cursor-pointer transition-all duration-200"
+        class="py-2 px-3 rounded-md border border-line text-sm text-ink hover:bg-hover hover:border-line-strong cursor-pointer transition-colors"
       >
-        Next
+        Next page ({$searchStore.currentPage + 2}/{maxPage + 1})
       </button>
     {/if}
   {/if}
-  <button
-    type="button"
-    bind:this={tooltipButton}
-    onmouseenter={handleMouseEnter}
-    onmouseleave={handleMouseLeave}
-    aria-label="Show pagination info"
-    class="h-[46px] px-3 rounded-lg bg-blue-900/50 hover:bg-blue-800/50 text-blue-200 text-sm font-medium cursor-pointer transition-all duration-200 flex items-center justify-center border border-blue-700/50"
-  >
-    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-      />
-    </svg>
-  </button>
 </div>

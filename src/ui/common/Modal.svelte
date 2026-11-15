@@ -6,32 +6,32 @@
   }>();
 </script>
 
-<div
-  class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
->
+<svelte:window onkeydown={(e) => e.key === "Escape" && onCancel()} />
+
+<div class="fixed inset-0 bg-black/60 z-[1000] flex items-center justify-center p-4">
   <div
-    class="bg-slate-800 rounded-xl shadow-2xl p-6 max-w-md w-full border border-slate-700"
+    class="bg-panel border border-line rounded-lg w-full max-w-md"
+    role="alertdialog"
+    aria-modal="true"
   >
-    <p class="text-slate-200 text-lg mb-6">{message}</p>
-    <div class="flex gap-3">
+    <p class="px-5 py-4 text-sm text-ink leading-relaxed">{message}</p>
+    <div class="px-5 py-3 border-t border-line flex justify-end gap-2">
+      <button
+        type="button"
+        onclick={onCancel}
+        class="py-2 px-3 rounded-md border border-line text-sm text-ink hover:bg-hover hover:border-line-strong cursor-pointer transition-colors"
+      >
+        {onConfirm ? "Cancel" : "OK"}
+      </button>
       {#if onConfirm}
         <button
           type="button"
           onclick={onConfirm}
-          class="flex-1 py-2 px-4 bg-green-600 hover:bg-green-500 text-white rounded-lg font-medium cursor-pointer transition-all duration-200"
+          class="py-2 px-4 bg-gold hover:bg-gold-strong text-on-gold rounded-md text-sm font-semibold cursor-pointer transition-colors"
         >
-          Confirm
+          Continue
         </button>
       {/if}
-      <button
-        type="button"
-        onclick={onCancel}
-        class="{onConfirm
-          ? 'flex-1'
-          : 'w-full'} py-2 px-4 bg-slate-600 hover:bg-slate-500 text-white rounded-lg font-medium cursor-pointer transition-all duration-200"
-      >
-        {onConfirm ? "Cancel" : "OK"}
-      </button>
     </div>
   </div>
 </div>

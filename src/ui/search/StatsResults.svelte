@@ -83,7 +83,7 @@
       const success = await copyToClipboard(pobFormat);
 
       if (success) {
-        showNotification("export", `Seed ${seed} copied to clipboard!`);
+        showNotification("export", `Seed ${seed} copied for Path of Building`);
       } else {
         throw new Error("Clipboard write failed");
       }
@@ -91,209 +91,100 @@
       console.error("Export failed:", error);
       showNotification(
         "error",
-        "Failed to copy. Please check browser permissions.",
+        "Couldn't copy to the clipboard. Allow clipboard access for this site and try again.",
       );
     }
   }
 </script>
 
-<div class="space-y-3">
-  <h3 class="text-lg font-semibold text-white">Search Results</h3>
-  {#each Object.keys($searchStore.statsResults).sort((a, b) => parseFloat(b) - parseFloat(a)) as total (total)}
-    <div class="bg-slate-800 rounded-lg overflow-hidden">
-      <div
-        class="w-full px-4 py-3 bg-slate-700 hover:bg-slate-600 text-white text-left font-medium transition-all duration-200 flex items-center justify-between"
-        role="button"
-        tabindex="0"
-        aria-expanded={expandedGroups[parseFloat(total)] ? "true" : "false"}
-        aria-label="Expand group"
-        onclick={() => {
-          const t = parseFloat(total);
-          onexpand(t);
-        }}
-        onkeydown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            const t = parseFloat(total);
-            onexpand(t);
-          }
-        }}
-      >
-        {#if $searchStore.statsResults[total].length > 0}
-          <button type="button" class="flex-1 text-left w-full h-full">
-            Total weight {total} ({$searchStore.statsResults[total].length}
-            {#if $searchStore.statsResults[total].length === 1}seed{:else}seeds{/if})
-          </button>
-          {@const groupSeeds = $searchStore.statsResults[total].map(
-            (g) => g.seed,
-          )}
-          {@const seedsPerPage = getSeedsPerPage(
-            $searchStore.jewelType!,
-            $searchStore.conqueror,
-          )}
-          {@const currentGroupPage = groupPages[total] || 0}
-          {@const maxGroupPage = Math.floor(
-            (groupSeeds.length - 1) / seedsPerPage,
-          )}
-          <div class="flex items-center gap-2">
-            <TradeButton
-              onclick={(e) => {
-                e.stopPropagation();
-                ongrouptrade(total);
-              }}
-            >
-              Trade
-            </TradeButton>
-            {#if hasGroupTraded[total] && currentGroupPage < maxGroupPage}
-              <TradeButton
-                onclick={(e) => {
-                  e.stopPropagation();
-                  ongroupnext(total);
-                }}
-              >
-                Next
-              </TradeButton>
-            {/if}
-            <button
-              type="button"
-              onclick={(e) => {
-                e.stopPropagation();
-                const t = parseFloat(total);
-                onexpand(t);
-              }}
-              aria-label="Expand group"
-              class="p-0.5 rounded hover:bg-slate-600 transition-all duration-200"
-            >
-              <svg
-                class="w-4 h-4 transition-transform duration-200 {expandedGroups[
-                  parseFloat(total)
-                ]
-                  ? 'rotate-180'
-                  : ''}"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
-            </button>
-          </div>
-        {:else}
+{#snippet chevron(open: boolean)}
+  <svg class="w-4 h-4 text-ink-faint transition-transform duration-150 {open ? 'rotate-180' : ''}" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+  </svg>
+{/snippet}
+
+<div>
+  <div class="flex items-baseline justify-between mb-2">
+    <h2 class="text-xs font-medium text-ink-muted">Results by score</h2>
+    <span class="text-xs text-ink-faint">{$searchStore.totalResults} seeds</span>
+  </div>
+  <div class="space-y-2">
+    {#each Object.keys($searchStore.statsResults).sort((a, b) => parseFloat(b) - parseFloat(a)) as total (total)}
+      {@const items = $searchStore.statsResults[total]}
+      {@const open = !!expandedGroups[parseFloat(total)]}
+      {@const groupSeeds = items.map((g) => g.seed)}
+      {@const seedsPerPage = getSeedsPerPage($searchStore.jewelType!, $searchStore.conqueror)}
+      {@const currentGroupPage = groupPages[total] || 0}
+      {@const maxGroupPage = Math.floor((groupSeeds.length - 1) / seedsPerPage)}
+      <div class="rounded-md border border-line overflow-hidden">
+        <div class="flex items-center gap-2 pr-2 bg-raised">
           <button
             type="button"
-            class="flex-1 text-left w-full h-full"
-            aria-label="Expand group"
+            class="flex-1 flex items-center gap-2 px-3 py-2 text-left cursor-pointer hover:bg-hover transition-colors"
+            aria-expanded={open}
+            onclick={() => onexpand(parseFloat(total))}
           >
-            0 matches (0 results)
+            {@render chevron(open)}
+            <span class="text-sm text-ink font-medium">Score {total}</span>
+            <span class="text-xs text-ink-faint">{items.length} {items.length === 1 ? "seed" : "seeds"}</span>
           </button>
-          <div class="flex items-center gap-2">
-            <TradeButton
-              onclick={(e) => {
-                e.stopPropagation();
-                ongrouptrade(total);
-              }}
-            >
-              Trade
-            </TradeButton>
-            <button
-              type="button"
-              onclick={(e) => {
-                e.stopPropagation();
-                const t = parseFloat(total);
-                onexpand(t);
-              }}
-              aria-label="Expand group"
-              class="p-0.5 rounded hover:bg-slate-600 transition-all duration-200"
-            >
-              <svg
-                class="w-4 h-4 transition-transform duration-200 {expandedGroups[
-                  parseFloat(total)
-                ]
-                  ? 'rotate-180'
-                  : ''}"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+          <TradeButton onclick={() => ongrouptrade(total)}>Trade</TradeButton>
+          {#if hasGroupTraded[total] && currentGroupPage < maxGroupPage}
+            <TradeButton variant="secondary" onclick={() => ongroupnext(total)}>Next page</TradeButton>
+          {/if}
+        </div>
+
+        {#if open}
+          <div class="divide-y divide-line border-t border-line">
+            {#each items as item (item.seed)}
+              {@const isActive = $searchStore.seed === item.seed}
+              <div
+                class="group px-3 py-2.5 cursor-pointer transition-colors {isActive ? 'bg-gold-soft' : 'hover:bg-hover'}"
+                role="button"
+                tabindex="0"
+                aria-pressed={isActive}
+                title="Show this seed on the tree"
+                onclick={() => handleSeedClick(item)}
+                onkeydown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    handleSeedClick(item);
+                  }
+                }}
               >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
-            </button>
+                <div class="flex items-center gap-2">
+                  <span class="flex-1 text-sm font-medium {isActive ? 'text-gold' : 'text-ink'}">Seed {item.seed}</span>
+                  <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
+                  <span class="flex items-center gap-1" onclick={(e) => e.stopPropagation()}>
+                    <ExportButton onclick={() => handleExportSeed(item.seed)} />
+                    <TradeButton variant="secondary" onclick={() => openTradeForSeed(item.seed)}>Trade</TradeButton>
+                  </span>
+                </div>
+                <ul class="mt-1 space-y-0.5">
+                  {#each Object.entries(item.statCounts) as [statKey, count] (statKey)}
+                    {@const stat = $searchStore.selectedStats.find((s) => s.statKey === parseInt(statKey))}
+                    {@const statTotal = item.statTotals?.[parseInt(statKey)] ?? 0}
+                    {@const divider = translation[statKey]?.[0]?.divider ?? 1}
+                    {#if stat}
+                      <li class="flex items-center gap-2 text-xs text-ink-muted">
+                        <span
+                          class="w-2 h-2 rounded-full shrink-0"
+                          style="background: {$searchStore.statKeyColors[parseInt(statKey)] || 'var(--color-ink-faint)'}"
+                          aria-hidden="true"
+                        ></span>
+                        <span class="flex-1 truncate" title={stat.label}>{stat.label}</span>
+                        <span class="text-ink-faint" title="Nodes with this stat">×{count}</span>
+                        <span class="w-10 text-right text-ink-faint" title="Total value">{statTotal / divider}</span>
+                      </li>
+                    {/if}
+                  {/each}
+                </ul>
+              </div>
+            {/each}
           </div>
         {/if}
       </div>
-      {#if expandedGroups[parseFloat(total)]}
-        <div class="divide-y divide-slate-700">
-          {#each $searchStore.statsResults[total] as item, i (item.seed)}
-            <div
-              role="button"
-              tabindex="0"
-              class="w-full px-4 py-3 text-left cursor-pointer transition-all duration-200 {i % 2 === 1 ? 'bg-slate-800 hover:bg-slate-700/50' : 'bg-slate-700/40 hover:bg-slate-700/70'}"
-              onclick={() => handleSeedClick(item)}
-              onkeydown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  handleSeedClick(item);
-                }
-              }}
-            >
-              <div class="flex items-center justify-between">
-                <span class="font-semibold text-blue-300"
-                  >Seed: {item.seed}</span
-                >
-                <div class="flex gap-2">
-                  <ExportButton onclick={() => handleExportSeed(item.seed)} />
-                  <TradeButton
-                    variant="secondary"
-                    onclick={(e) => {
-                      e.stopPropagation();
-                      openTradeForSeed(item.seed);
-                    }}
-                  >
-                    Trade
-                  </TradeButton>
-                </div>
-              </div>
-              <div class="mt-2 space-y-1">
-                {#each Object.entries(item.statCounts) as [statKey, count] (statKey)}
-                  {@const stat = $searchStore.selectedStats.find(
-                    (s) => s.statKey === parseInt(statKey),
-                  )}
-                  {@const total = item.statTotals?.[parseInt(statKey)] ?? 0}
-                  {@const transEntry = translation[statKey]?.[0]}
-                  {@const divider = transEntry?.divider ?? 1}
-                  {@const displayTotal = total / divider}
-                  {#if stat}
-                    <div
-                      class="text-sm text-slate-300 flex justify-between"
-                      style="color: {$searchStore.statKeyColors[
-                        parseInt(statKey)
-                      ] || '#10B981'}"
-                    >
-                      <div>
-                        <span>({count})</span>
-                        {stat.label}
-                      </div>
-                      <span class="font-semibold">
-                        total: [{displayTotal}]
-                      </span>
-                    </div>
-                  {/if}
-                {/each}
-              </div>
-            </div>
-          {/each}
-        </div>
-      {/if}
-    </div>
-  {/each}
+    {/each}
+  </div>
+  <p class="mt-2 text-xs text-ink-faint">Click a seed to show it on the tree. Dots match the highlight colors on the tree.</p>
 </div>

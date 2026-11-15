@@ -1,14 +1,77 @@
 @import "tailwindcss";
 
+/*
+ * Design tokens. Neutral graphite surfaces; one muted gold accent that echoes
+ * allocated nodes on the passive tree. Gold means "selected" or "the main action",
+ * nothing else. Use these names (bg-panel, text-ink-muted, border-line, bg-gold...)
+ * instead of raw Tailwind colors.
+ */
 @theme {
-  --color-scrollbar-track: #1e293b;
-  --color-scrollbar-thumb: #475569;
-  --color-scrollbar-thumb-hover: #3b82f6;
+  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+
+  --color-canvas: #070c11;
+  --color-panel: #111418;
+  --color-raised: #181c21;
+  --color-hover: #20252b;
+  --color-line: #2a3038;
+  --color-line-strong: #3b424c;
+
+  --color-ink: #e9e7e2;
+  --color-ink-muted: #a3a7ad;
+  --color-ink-faint: #7d828a;
+
+  --color-gold: #c9a55a;
+  --color-gold-strong: #ddb96c;
+  --color-gold-soft: rgb(201 165 90 / 0.14);
+  --color-on-gold: #1a1408;
+
+  --color-danger: #e0695c;
+  --color-danger-soft: rgb(224 105 92 / 0.12);
+
+  --panel-width: 380px;
+}
+
+:root {
+  color-scheme: dark;
+  /* Set to the panel width by Sidebar.svelte while it is open on desktop. */
+  --panel-offset: 0px;
+}
+
+@media (min-width: 768px) {
+  :root[data-panel="open"] {
+    --panel-offset: var(--panel-width);
+  }
+}
+
+html,
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-feature-settings: "tnum" 1;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* In the base layer so utilities like focus:outline-none on inputs can override it. */
+@layer base {
+  :focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 2px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
 }
 
 .custom-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: var(--color-scrollbar-thumb) var(--color-scrollbar-track);
+  scrollbar-color: var(--color-line-strong) transparent;
 }
 
 .custom-scrollbar::-webkit-scrollbar {
@@ -16,18 +79,16 @@
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: var(--color-scrollbar-track);
-  border-radius: 4px;
+  background: transparent;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: var(--color-scrollbar-thumb);
+  background: var(--color-line-strong);
   border-radius: 4px;
-  transition: background 0.2s ease;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: var(--color-scrollbar-thumb-hover);
+  background: var(--color-ink-faint);
 }
 
 /* Hide number input spinners */

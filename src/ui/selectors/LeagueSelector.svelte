@@ -42,5 +42,5 @@
   selectedValue={$searchStore.league}
   onSelect={selectLeague}
   {loading}
-  loadingText="Loading leagues..."
+  loadingText="Loading leagues"
 />

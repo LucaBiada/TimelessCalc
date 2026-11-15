@@ -7,7 +7,7 @@ import DebugPanel from "$lib/ui/debug/DebugPanel.svelte";
 import JewelLoadErrorModal from "$lib/ui/modals/JewelLoadErrorModal.svelte";
 import HelpModal from "$lib/ui/modals/HelpModal.svelte";
 import SeedSearchModal from "$lib/ui/modals/SeedSearchModal.svelte";
-import SeedSearchButton from "$lib/ui/common/SeedSearchButton.svelte";
+import { seedAnalyzerRequest } from "$lib/stores/seedAnalyzerStore";
 import TreeCanvas from "$lib/TreeCanvas.svelte";
 import { treeStore } from "$lib/stores/treeStore";
 import { searchStore, clearJewelLoadError, initDefaultLeague } from "$lib/stores/searchStore";
@@ -21,7 +21,6 @@ import { canvas } from "$lib/canvas/canvasContext";
 import { fetchLeagues } from "./providers/leagues";
 import Notification from "$lib/ui/notifications/Notification.svelte";
 import TradeNotification from "$lib/ui/notifications/TradeNotification.svelte";
-import { URLS } from "$lib/constants/urls";
 import type { SeedSearchResults } from "$lib/types";
     import ReleaseModal from "./ui/modals/ReleaseModal.svelte";
 
@@ -97,6 +96,10 @@ $effect(() => {
 	}
 });
 
+$effect(() => {
+	if ($seedAnalyzerRequest) showSeedSearch = true;
+});
+
 function handleErrorClose() {
 	searchStore.update((s) => ({ ...s, jewelType: null }));
 	clearJewelLoadError();
@@ -116,7 +119,7 @@ function handleRenderDuration(duration: number) {
 <TreeCanvas onRender={handleRenderDuration} />
 
 <Tooltip node={$treeStore.hovered} x={$mouseStore.x} y={$mouseStore.y} />
-<Sidebar />
+<Sidebar onhelp={() => (showHelp = true)} />
 
 {#if $searchStore.jewelLoadError}
   <JewelLoadErrorModal
@@ -144,53 +147,33 @@ function handleRenderDuration(duration: number) {
 
 {#if showSeedSearch}
   <SeedSearchModal
-    onclose={() => showSeedSearch = false}
+    onclose={() => { showSeedSearch = false; triggerPaste = false; seedAnalyzerRequest.set(null); }}
+    initial={$seedAnalyzerRequest}
     triggerPaste={triggerPaste}
     onresults={(results) => _seedSearchResults = results}
   />
 {/if}
 
 <ReleaseModal releaseData={{
-  version: "1.1.1",
-  title: "Update with 3.29 tree",
-  date: "July 28, 2026",
+  version: "1.2.0",
+  title: "Update with 3.30 tree",
+  date: "November 15, 2026",
   features: [
     {
-      name: "New passive clusters",
-      description: "Added the new <strong>Arcane Conservation</strong> cluster to the north-east of the Witch's starting location.<br/>Added the new <strong>Contemplative Meditation</strong> cluster to the north-west of the Templar's starting location."
+      name: "3.30 data",
+      description: "Tree, jewel seeds and stat texts regenerated from 3.30.0.2. Heroic Tragedy: two notables changed values."
+    },
+    {
+      name: "Fixes",
+      description: "Lethal Pride <strong>+Strength</strong> and Brutal Restraint <strong>+Dexterity</strong> no longer show as unknown stats.<br/>The <strong>Analyze Seed</strong> dialog now uses the current tree and stat texts."
     }
   ]
 }} />
 
-<div class="fixed bottom-2 right-2 flex gap-2 z-1">
-  <a
-    href={URLS.GITHUB_REPO}
-    target="_blank"
-    rel="noopener noreferrer"
-    class="w-8 h-8 flex items-center justify-center text-[rgba(200,200,200,0.8)] hover:text-white transition-colors rounded"
-    aria-label="View on GitHub"
-  >
-    <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" viewBox="0 0 16 16">
-      <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8"/>
-    </svg>
-  </a>
-  <button
-    onclick={() => showHelp = true}
-    class="w-8 h-8 flex items-center justify-center text-[rgba(200,200,200,0.8)] hover:text-white transition-colors rounded cursor-pointer"
-    aria-label="Help"
-  >
-    <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" viewBox="0 0 16 16">
-      <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-      <path d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286zm1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94z"/>
-    </svg>
-  </button>
-  <SeedSearchButton onclick={() => showSeedSearch = true} />
-</div>
 
 <style>
   :global(body) {
     margin: 0;
     overflow: hidden;
-    font-family: Fontin, sans-serif;
   }
 </style>

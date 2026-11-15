@@ -3,8 +3,53 @@
   import { treeStore } from "$lib/stores/treeStore";
   import { canvas } from "$lib/canvas/canvasContext";
 
+  let socketNodes = $derived(
+    $treeStore.chosenSocket
+      ? canvas.treeData.socketNodes[$treeStore.chosenSocket.skill]
+          .map((id) => canvas.treeData.nodes[id])
+          .filter((n): n is Node => !!n)
+      : [],
+  );
+  const isSmall = (n: Node) => !n.isNotable && !n.isMastery && !n.isKeystone && !n.isJewelSocket;
+  const allIn = (nodes: Node[]) =>
+    nodes.length > 0 && nodes.every((n) => $treeStore.allocated.has(n.skill.toString()));
+  let selectedCount = $derived(
+    socketNodes.filter((n) => $treeStore.allocated.has(n.skill.toString())).length,
+  );
+  let groups = $derived([
+    { label: "All", title: "Select or unselect every node in the jewel radius", on: allIn(socketNodes), toggle: toggleAllNodes },
+    { label: "Notables", title: "Select or unselect notable nodes", on: allIn(socketNodes.filter((n) => n.isNotable)), toggle: toggleNotableNodes },
+    { label: "Small", title: "Select or unselect small nodes", on: allIn(socketNodes.filter(isSmall)), toggle: toggleSmallNodes },
+  ]);
+
   function updateAllocatedDisplay() {
     canvas.state.highlightVersion++;
+  }
+
+  function toggleAllNodes() {
+    const chosenSocket = $treeStore.chosenSocket;
+    if (!chosenSocket) return;
+
+    const nodes = canvas.treeData.socketNodes[chosenSocket.skill]
+      .map((id) => canvas.treeData.nodes[id])
+      .filter((n): n is Node => !!n);
+
+    const allAllocated =
+      nodes.length > 0 &&
+      nodes.every((n) => $treeStore.allocated.has(n.skill.toString()));
+
+    treeStore.update((state) => {
+      if (allAllocated) {
+        state.allocated.clear();
+        state.locked.clear();
+      } else {
+        for (const node of nodes) {
+          state.allocated.set(node.skill.toString(), node);
+        }
+      }
+      return state;
+    });
+    updateAllocatedDisplay();
   }
 
   function toggleNotableNodes() {
@@ -74,19 +119,25 @@
   }
 </script>
 
-<div class="flex gap-2 mt-6">
-  <button
-    type="button"
-    onclick={toggleNotableNodes}
-    class="flex-1 py-2 px-4 bg-amber-700 hover:bg-amber-600 text-white rounded-lg font-medium cursor-pointer transition-all duration-200"
-  >
-    Notable
-  </button>
-  <button
-    type="button"
-    onclick={toggleSmallNodes}
-    class="flex-1 py-2 px-4 bg-emerald-700 hover:bg-emerald-600 text-white rounded-lg font-medium cursor-pointer transition-all duration-200"
-  >
-    Small
-  </button>
-</div>
+{#if $treeStore.chosenSocket}
+  <div class="flex items-baseline justify-between mb-2">
+    <span class="text-xs font-medium text-ink-muted">Nodes to count</span>
+    <span class="text-xs text-ink-faint" aria-live="polite">{selectedCount} of {socketNodes.length} selected</span>
+  </div>
+  <div class="grid grid-cols-3 gap-1.5">
+    {#each groups as group (group.label)}
+      <button
+        type="button"
+        onclick={group.toggle}
+        title={group.title}
+        aria-pressed={group.on}
+        class="py-1.5 px-2 rounded-md border text-[13px] cursor-pointer transition-colors {group.on
+          ? 'border-gold bg-gold-soft text-ink font-medium'
+          : 'border-line bg-raised text-ink-muted hover:text-ink hover:border-line-strong'}"
+      >
+        {group.label}
+      </button>
+    {/each}
+  </div>
+  <p class="mt-2 text-xs text-ink-faint">Or click nodes on the tree. Ctrl+click locks a node: stat searches then only keep seeds that put one of your stats on it.</p>
+{/if}

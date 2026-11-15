@@ -24,6 +24,8 @@
       return occurrencesUpToI > occurrencesInBase;
     });
   });
+  let keptStats = $derived(statsToDisplay.filter((_, i) => !isExtraStat[i]));
+  let jewelStats = $derived(statsToDisplay.filter((_, i) => isExtraStat[i]));
   let header = $derived(node?.conqueredName || node?.name || "");
 
   let tw = $state(0);
@@ -52,16 +54,26 @@
   <div
     bind:clientWidth={tw}
     bind:clientHeight={th}
-    class="fixed z-50 pointer-events-none bg-black/90 text-amber-100 p-3 rounded-lg font-fontin text-lg max-w-sm whitespace-pre-wrap shadow-lg"
+    class="fixed z-50 pointer-events-none bg-panel/95 border border-line-strong text-ink px-3 py-2.5 rounded-md max-w-xs shadow-lg shadow-black/50"
     style="left: {tooltipPos.left}px; top: {tooltipPos.top}px; {tw === 0 ? 'visibility: hidden;' : ''}"
   >
-    <div class="font-bold mb-2">{header}</div>
-    <div class="space-y-1">
-      {#each statsToDisplay as stat, index (index)}
-        <div class="text-sm" class:text-red-400={isExtraStat[index]}>
-          {stat}
-        </div>
-      {/each}
-    </div>
+    <div class="text-sm font-semibold">{header}</div>
+    {#if keptStats.length > 0}
+      <ul class="mt-1.5 space-y-0.5 text-[13px] text-ink-muted whitespace-pre-wrap">
+        {#each keptStats as stat, index (index)}
+          <li>{stat}</li>
+        {/each}
+      </ul>
+    {/if}
+    {#if jewelStats.length > 0}
+      <div class="mt-2 pt-2 border-t border-line">
+        <div class="text-xs text-ink-faint mb-0.5">From jewel</div>
+        <ul class="space-y-0.5 text-[13px] text-gold whitespace-pre-wrap">
+          {#each jewelStats as stat, index (index)}
+            <li>{stat}</li>
+          {/each}
+        </ul>
+      </div>
+    {/if}
   </div>
 {/if}
