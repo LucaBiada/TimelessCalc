@@ -2,7 +2,8 @@
   import type { JewelType, Stat, StatSearchMode } from "$lib/types";
   import { searchStore } from "$lib/stores/searchStore";
   import { filterStats } from "$lib/utils/sidebar/sidebarUtils";
-  import { getStatsOptions } from "$lib/utils/sidebar/options";
+  import { getStatsOptions, getAllStatsOptions } from "$lib/utils/sidebar/options";
+  import { jewelTypes } from "$lib/constants/timeless";
   import jewelStatsJson from "$lib/data/jewelstats.json" with { type: "json" };
   import { translations } from "$lib/providers/translations";
 
@@ -17,11 +18,9 @@
   let inputElement: HTMLInputElement;
 
   let filteredStats = $derived.by(() => {
-    const computedOptions = getStatsOptions(
-      jewelType,
-      jewelStats,
-      translations,
-    );
+    const computedOptions = $searchStore.allJewels
+      ? getAllStatsOptions(jewelTypes, jewelStats, translations)
+      : getStatsOptions(jewelType, jewelStats, translations);
     return filterStats(
       searchValue,
       computedOptions,
@@ -30,6 +29,14 @@
   });
 
   let isGloriousVanity = $derived(jewelType?.name === "vaal");
+
+  // In "All" mode, show which jewels can roll each stat; the others ignore it.
+  function jewelsWithStat(statKey: number): string {
+    const names = jewelTypes
+      .filter((j) => jewelStats[j.name]?.includes(statKey))
+      .map((j) => j.label);
+    return names.length === jewelTypes.length ? "All jewels" : names.join(", ");
+  }
   let minLabel = $derived.by(() =>
     $searchStore.statSearchMode === "occurrences" ? "Min. nodes" : "Min. value",
   );
@@ -204,6 +211,9 @@
               </svg>
             </button>
           </div>
+          {#if $searchStore.allJewels}
+            <div class="mt-0.5 text-xs text-ink-faint">{jewelsWithStat(stat.statKey)}</div>
+          {/if}
           <div class="mt-2 flex items-center gap-3 text-xs text-ink-muted">
             {#if !stat.exclude}
               <label class="flex items-center gap-1.5">

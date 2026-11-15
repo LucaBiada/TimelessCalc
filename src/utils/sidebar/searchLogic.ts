@@ -6,8 +6,11 @@ import type {
   Stat,
   Translation,
   JewelEntry,
+  JewelGroupResult,
+  StatsResults,
   Node as TreeNode,
 } from "$lib/types";
+import { jewelTypes, conquerors } from "$lib/constants/timeless";
 import { searchStore } from "$lib/stores/searchStore";
 import { get } from "svelte/store";
 import { tick } from "svelte";
@@ -273,6 +276,30 @@ export async function handleStatsSearch(
     setSearchLoading(false);
     return;
   }
+
+  const { grouped, orderedSeeds, statKeys } = computeStatsSearch(jewelData, selectedStats);
+  const statKeyColors = generateStatKeyColors(statKeys);
+
+  searchStore.update((state) => {
+    state.searched = true;
+    state.loading = false;
+    state.statsResults = grouped;
+    state.statKeyColors = statKeyColors;
+    state.orderedSeeds = orderedSeeds;
+    state.totalResults = orderedSeeds.length;
+    state.currentPage = 0;
+    return state;
+  });
+}
+
+/**
+ * Scores every seed of one jewel for the selected stats on the allocated nodes.
+ * Shared by the single-jewel search and the "All" jewels search.
+ */
+function computeStatsSearch(
+  jewelData: Record<number, JewelEntry>,
+  selectedStats: Stat[],
+): { grouped: StatsResults; orderedSeeds: number[]; statKeys: number[] } {
   const results: Record<
     number,
     {
@@ -336,19 +363,11 @@ export async function handleStatsSearch(
     }
   }
 
-  const grouped: Record<
-    string,
-    {
-      seed: number;
-      statCounts: Record<number, number>;
-      statTotals: Record<number, number>;
-      totalWeight: number;
-    }[]
-  > = {};
+  const grouped: StatsResults = {};
   const minTotalWeight = get(searchStore).minTotalWeight;
   for (const [seed, data] of Object.entries(results)) {
     const totalWeight = calculateWeight(data, selectedStats, statSearchMode);
-    
+
     if (totalWeight === null || totalWeight < minTotalWeight || totalWeight === 0) continue;
 
     const key = totalWeight.toFixed(1);
@@ -375,15 +394,61 @@ export async function handleStatsSearch(
       allStatKeys.add(parseInt(key));
     }
   }
-  const statKeyColors = generateStatKeyColors(Array.from(allStatKeys));
+
+  return { grouped, orderedSeeds, statKeys: Array.from(allStatKeys) };
+}
+
+/**
+ * "All" jewel option: runs the stat search on every jewel type for the chosen socket.
+ * Each jewel only uses the selected stats it can roll, so a stat unique to one jewel
+ * doesn't empty the others. Jewels that can roll none of the wanted stats are skipped.
+ */
+export async function handleAllJewelsSearch(
+  selectedStats: Stat[],
+  jewelStats: Record<string, number[]>,
+) {
+  setSearchLoading(true);
+  await tick();
+
+  const chosenSocket = get(treeStore).chosenSocket?.skill;
+  if (!chosenSocket || selectedStats.length === 0) {
+    setSearchNotFound();
+    return;
+  }
+
+  const groups: JewelGroupResult[] = [];
+  for (const jewelType of jewelTypes) {
+    const rollable = new Set(jewelStats[jewelType.name] || []);
+    const usableStats = selectedStats.filter((s) => rollable.has(s.statKey));
+    if (!usableStats.some((s) => !s.exclude)) continue;
+
+    const jewelData = await loadJewelData(jewelType, String(chosenSocket));
+    if (!jewelData) continue;
+
+    const { grouped, orderedSeeds } = computeStatsSearch(jewelData, usableStats);
+    const scores = Object.keys(grouped).map(parseFloat);
+    groups.push({
+      jewelType,
+      conqueror: conquerors[jewelType.name][0],
+      statsResults: grouped,
+      orderedSeeds,
+      totalResults: orderedSeeds.length,
+      bestScore: scores.length ? Math.max(...scores) : 0,
+      usableStatKeys: usableStats.map((s) => s.statKey),
+    });
+  }
+
+  // One color per selected stat, shared by every jewel group so the tree highlights match.
+  const statKeyColors = generateStatKeyColors(selectedStats.map((s) => s.statKey));
 
   searchStore.update((state) => {
     state.searched = true;
     state.loading = false;
-    state.statsResults = grouped;
+    state.allJewelResults = groups;
     state.statKeyColors = statKeyColors;
-    state.orderedSeeds = orderedSeeds;
-    state.totalResults = orderedSeeds.length;
+    state.statsResults = {};
+    state.orderedSeeds = [];
+    state.totalResults = 0;
     state.currentPage = 0;
     return state;
   });

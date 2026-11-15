@@ -21,8 +21,11 @@ import { findNearbyKeystone } from "$lib/utils/formatters";
 
 let {
 	ontargetposition,
+	embedded = false,
 }: {
 	ontargetposition?: (pos: { top: number; left: number } | null) => void;
+	/** Inside an "All jewels" group: the group list owns the way back to the form. */
+	embedded?: boolean;
 } = $props();
 
 let expandedGroups: Record<number, boolean> = $state({});
@@ -221,7 +224,8 @@ function handleSaveFavorite(name: string) {
 }
 </script>
 
-<div class="flex items-center gap-1 mb-4">
+<div class="flex items-center gap-1 {embedded ? 'mb-3 -mt-1' : 'mb-4'}">
+  {#if !embedded}
   <button
     onclick={backToForm}
     class="flex items-center gap-1 -ml-2 px-2 h-8 rounded-md text-sm text-ink-muted hover:text-ink hover:bg-hover transition-colors cursor-pointer"
@@ -231,6 +235,7 @@ function handleSaveFavorite(name: string) {
     </svg>
     Edit search
   </button>
+  {/if}
 
   <div class="flex-1"></div>
 

@@ -26,3 +26,18 @@ export function getStatsOptions(
   });
   return Array.from(options.values());
 }
+
+/** Every stat any jewel type can roll, once each (stat ids are shared between jewels). */
+export function getAllStatsOptions(
+  jewelTypes: JewelType[],
+  jewelStats: Record<string, number[]>,
+  translation: Record<string, Translation[]>,
+): Stat[] {
+  const options = new Map<number, Stat>();
+  for (const jewelType of jewelTypes) {
+    for (const stat of getStatsOptions(jewelType, jewelStats, translation)) {
+      if (!options.has(stat.statKey)) options.set(stat.statKey, stat);
+    }
+  }
+  return Array.from(options.values()).sort((a, b) => a.label.localeCompare(b.label));
+}

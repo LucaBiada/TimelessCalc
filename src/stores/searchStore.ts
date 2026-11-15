@@ -36,6 +36,8 @@ export const searchStore = writable<SearchStore>({
 	seedSearched: false,
 	automated: false,
 	jewelLoadError: null,
+	allJewels: false,
+	allJewelResults: null,
 });
 
 export { resetDependentFields } from "$lib/utils/search/resetStore";

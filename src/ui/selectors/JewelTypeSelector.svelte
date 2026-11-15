@@ -76,10 +76,31 @@
     <RadioButton
       _value={jewel}
       label={jewel.label}
-      isSelected={jewelType?.name === jewel.name}
+      isSelected={!$searchStore.allJewels && jewelType?.name === jewel.name}
       onclick={() => {
+        searchStore.update((s) => ({ ...s, allJewels: false, allJewelResults: null }));
         jewelType = jewel;
       }}
     />
   {/each}
+  <div class="col-span-3">
+    <RadioButton
+      _value="all"
+      label="All jewels"
+      hint="Search every jewel type at once (stat search only)"
+      isSelected={!!$searchStore.allJewels}
+      size="sm"
+      onclick={() => {
+        searchStore.update((s) => ({
+          ...s,
+          allJewels: true,
+          allJewelResults: null,
+          conqueror: null,
+          mode: "stats",
+          seedSearched: false,
+        }));
+        jewelType = null;
+      }}
+    />
+  </div>
 </div>

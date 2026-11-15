@@ -5,7 +5,8 @@
   import { historyActions } from "$lib/stores/historyStore";
   import { conquerors } from "$lib/constants/timeless";
   import { getConquerorOptions } from "$lib/utils/sidebar/options";
-  import { handleSearch as performSearch } from "$lib/utils/sidebar/searchLogic";
+  import { handleSearch as performSearch, handleAllJewelsSearch } from "$lib/utils/sidebar/searchLogic";
+  import jewelStatsJson from "$lib/data/jewelstats.json" with { type: "json" };
   import { translations } from "$lib/providers/translations";
 
   import JewelTypeSelector from "$lib/ui/selectors/JewelTypeSelector.svelte";
@@ -41,7 +42,8 @@
       // Only reset if changing jewelType AND conqueror doesn't match the new type
       // This allows history/URL loading to work (they set all fields correctly)
       // while resetting on user interaction
-      if (previousJewelType !== null) {
+      // Switching to "All jewels" keeps the chosen stats.
+      if (previousJewelType !== null && !(current === null && $searchStore.allJewels)) {
         const currentConqueror = $searchStore.conqueror;
         const validConquerors = current ? conquerors[current.name] || [] : [];
         const isValidConqueror = validConquerors.some(
@@ -89,6 +91,16 @@
   );
 
   async function handleSearch() {
+    if ($searchStore.allJewels) {
+      await handleAllJewelsSearch(
+        $searchStore.selectedStats,
+        jewelStatsJson as Record<string, number[]>,
+      );
+      if ($searchStore.searched) {
+        searchStore.update((s) => ({ ...s, statsSearched: true }));
+      }
+      return;
+    }
     await performSearch(
       $searchStore.mode,
       seedInput,
@@ -163,19 +175,21 @@
         <JewelTypeSelector bind:jewelType={$searchStore.jewelType} />
       </section>
 
-      {#if $searchStore.jewelType}
-        <section>
-          <ConquerorSelector
-            bind:conqueror={$searchStore.conqueror}
-            options={conquerorOptions}
-          />
-        </section>
+      {#if $searchStore.jewelType || $searchStore.allJewels}
+        {#if !$searchStore.allJewels}
+          <section>
+            <ConquerorSelector
+              bind:conqueror={$searchStore.conqueror}
+              options={conquerorOptions}
+            />
+          </section>
+        {/if}
 
-        {#if $searchStore.conqueror}
+        {#if $searchStore.conqueror || $searchStore.allJewels}
           <section>
             <ModeSelector
               mode={$searchStore.mode}
-              disabled={!$searchStore.jewelType}
+              seedDisabled={!!$searchStore.allJewels}
               onselectmode={setMode}
             />
           </section>

@@ -137,6 +137,28 @@ export interface League {
 
 export type Platform = "PC" | "Xbox" | "Playstation";
 
+export type StatsResults = Record<
+  string,
+  {
+    seed: number;
+    statCounts: Record<number, number>;
+    statTotals: Record<number, number>;
+    totalWeight: number;
+  }[]
+>;
+
+/** One jewel's results when searching all jewel types at once. */
+export interface JewelGroupResult {
+  jewelType: JewelType;
+  conqueror: Conqueror;
+  statsResults: StatsResults;
+  orderedSeeds: number[];
+  totalResults: number;
+  bestScore: number;
+  /** Selected stats this jewel can roll; the others are ignored for it. */
+  usableStatKeys: number[];
+}
+
 export interface SearchStore {
   jewelType: JewelType | null;
   conqueror: Conqueror | null;
@@ -172,6 +194,9 @@ export interface SearchStore {
   seedSearched: boolean;
   automated: boolean;
   jewelLoadError: { jewel: JewelType; message: string } | null;
+  /** "All" jewel option: stat search runs on every jewel type. */
+  allJewels?: boolean;
+  allJewelResults?: JewelGroupResult[] | null;
 }
 
 export interface SearchHistoryEntry {
