@@ -51,7 +51,7 @@
           </svg>
         </button>
       </div>
-      <div class="flex gap-1 overflow-x-auto" role="tablist">
+      <div class="flex flex-wrap gap-1" role="tablist">
         {#each tabs as tab (tab.id)}
           <button
             type="button"
