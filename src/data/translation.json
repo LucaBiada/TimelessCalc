@@ -128,7 +128,7 @@
   "83": [
     {
       "divider": 1,
-      "translation": "{0} to Accuracy Rating"
+      "translation": "+{0} to Accuracy Rating"
     }
   ],
   "84": [
@@ -146,7 +146,7 @@
   "95": [
     {
       "divider": 1,
-      "translation": "{0}% to Global Critical Strike Multiplier"
+      "translation": "+{0}% to Global Critical Strike Multiplier"
     }
   ],
   "97": [
@@ -176,7 +176,7 @@
   "116": [
     {
       "divider": 1,
-      "translation": "{0} to Armour"
+      "translation": "+{0} to Armour"
     }
   ],
   "117": [
@@ -194,7 +194,7 @@
   "119": [
     {
       "divider": 1,
-      "translation": "{0} to Evasion Rating"
+      "translation": "+{0} to Evasion Rating"
     }
   ],
   "120": [
@@ -224,7 +224,7 @@
   "124": [
     {
       "divider": 1,
-      "translation": "{0} to maximum Life"
+      "translation": "+{0} to maximum Life"
     }
   ],
   "125": [
@@ -248,7 +248,7 @@
   "128": [
     {
       "divider": 1,
-      "translation": "{0} to maximum Mana"
+      "translation": "+{0} to maximum Mana"
     }
   ],
   "129": [
@@ -285,7 +285,7 @@
   "134": [
     {
       "divider": 1,
-      "translation": "{0} to maximum Energy Shield"
+      "translation": "+{0} to maximum Energy Shield"
     }
   ],
   "135": [
@@ -327,31 +327,31 @@
   "142": [
     {
       "divider": 1,
-      "translation": "{0}% to all Elemental Resistances"
+      "translation": "+{0}% to all Elemental Resistances"
     }
   ],
   "146": [
     {
       "divider": 1,
-      "translation": "{0}% to Fire Resistance"
+      "translation": "+{0}% to Fire Resistance"
     }
   ],
   "148": [
     {
       "divider": 1,
-      "translation": "{0}% to Cold Resistance"
+      "translation": "+{0}% to Cold Resistance"
     }
   ],
   "150": [
     {
       "divider": 1,
-      "translation": "{0}% to Lightning Resistance"
+      "translation": "+{0}% to Lightning Resistance"
     }
   ],
   "152": [
     {
       "divider": 1,
-      "translation": "{0}% to Chaos Resistance"
+      "translation": "+{0}% to Chaos Resistance"
     }
   ],
   "161": [
@@ -675,22 +675,34 @@
       "translation": "{0}% reduced Spell Critical Strike Chance"
     }
   ],
+  "575": [
+    {
+      "divider": 1,
+      "translation": "+{0} to Strength"
+    }
+  ],
   "576": [
     {
       "divider": 1,
-      "translation": "{0} to Strength"
+      "translation": "+{0} to Strength"
     }
   ],
   "579": [
     {
       "divider": 1,
-      "translation": "{0} to Intelligence"
+      "translation": "+{0} to Intelligence"
+    }
+  ],
+  "581": [
+    {
+      "divider": 1,
+      "translation": "+{0} to Dexterity"
     }
   ],
   "582": [
     {
       "divider": 1,
-      "translation": "{0} to Dexterity"
+      "translation": "+{0} to Dexterity"
     }
   ],
   "595": [
@@ -732,7 +744,7 @@
   "607": [
     {
       "divider": 1,
-      "translation": "{0} to all Attributes"
+      "translation": "+{0} to all Attributes"
     }
   ],
   "613": [
@@ -821,25 +833,25 @@
   "944": [
     {
       "divider": 1,
-      "translation": "{0}% to maximum Fire Resistance"
+      "translation": "+{0}% to maximum Fire Resistance"
     }
   ],
   "945": [
     {
       "divider": 1,
-      "translation": "{0}% to maximum Cold Resistance"
+      "translation": "+{0}% to maximum Cold Resistance"
     }
   ],
   "946": [
     {
       "divider": 1,
-      "translation": "{0}% to maximum Lightning Resistance"
+      "translation": "+{0}% to maximum Lightning Resistance"
     }
   ],
   "947": [
     {
       "divider": 1,
-      "translation": "{0}% to maximum Chaos Resistance"
+      "translation": "+{0}% to maximum Chaos Resistance"
     }
   ],
   "976": [
@@ -869,7 +881,7 @@
   "1085": [
     {
       "divider": 1,
-      "translation": "{0}% Chance to Block Attack Damage"
+      "translation": "+{0}% Chance to Block Attack Damage"
     }
   ],
   "1090": [
@@ -895,13 +907,13 @@
   "1299": [
     {
       "divider": 1,
-      "translation": "{0}% to Melee Critical Strike Multiplier"
+      "translation": "+{0}% to Melee Critical Strike Multiplier"
     }
   ],
   "1334": [
     {
       "divider": 1,
-      "translation": "Ignites you inflict deal Damage {0}% faster"
+      "translation": "Ignites you inflict deal Damage {0}% Faster"
     }
   ],
   "1348": [
@@ -969,19 +981,19 @@
   "1390": [
     {
       "divider": 1,
-      "translation": "{0} to Strength and Intelligence"
+      "translation": "+{0} to Strength and Intelligence"
     }
   ],
   "1391": [
     {
       "divider": 1,
-      "translation": "{0} to Strength and Dexterity"
+      "translation": "+{0} to Strength and Dexterity"
     }
   ],
   "1392": [
     {
       "divider": 1,
-      "translation": "{0} to Dexterity and Intelligence"
+      "translation": "+{0} to Dexterity and Intelligence"
     }
   ],
   "1393": [
@@ -1003,37 +1015,37 @@
       "translation": "You gain Onslaught for {0} seconds on Kill"
     }
   ],
-  "1622": [
+  "1625": [
     {
       "divider": 1,
       "translation": "Adds {0} to {1} Physical Damage to Spells"
     }
   ],
-  "1624": [
+  "1627": [
     {
       "divider": 1,
       "translation": "Adds {0} to {1} Fire Damage to Spells"
     }
   ],
-  "1626": [
+  "1629": [
     {
       "divider": 1,
       "translation": "Adds {0} to {1} Cold Damage to Spells"
     }
   ],
-  "1628": [
+  "1631": [
     {
       "divider": 1,
       "translation": "Adds {0} to {1} Lightning Damage to Spells"
     }
   ],
-  "1630": [
+  "1633": [
     {
       "divider": 1,
       "translation": "Adds {0} to {1} Chaos Damage to Spells"
     }
   ],
-  "1692": [
+  "1695": [
     {
       "from": 1,
       "divider": 1,
@@ -1045,7 +1057,7 @@
       "translation": "{0}% reduced Damage per Frenzy Charge"
     }
   ],
-  "1826": [
+  "1829": [
     {
       "from": 1,
       "divider": 1,
@@ -1057,25 +1069,25 @@
       "translation": "{0}% reduced Totem Damage"
     }
   ],
-  "1901": [
+  "1904": [
     {
       "divider": 1,
-      "translation": "{0}% to Fire and Cold Resistances"
+      "translation": "+{0}% to Fire and Cold Resistances"
     }
   ],
-  "1902": [
+  "1905": [
     {
       "divider": 1,
-      "translation": "{0}% to Fire and Lightning Resistances"
+      "translation": "+{0}% to Fire and Lightning Resistances"
     }
   ],
-  "1903": [
+  "1906": [
     {
       "divider": 1,
-      "translation": "{0}% to Cold and Lightning Resistances"
+      "translation": "+{0}% to Cold and Lightning Resistances"
     }
   ],
-  "1949": [
+  "1952": [
     {
       "from": 1,
       "divider": 1,
@@ -1087,7 +1099,7 @@
       "translation": "{0}% reduced Attack and Cast Speed"
     }
   ],
-  "2020": [
+  "2023": [
     {
       "from": 1,
       "divider": 1,
@@ -1099,7 +1111,7 @@
       "translation": "{0}% reduced Damage over Time"
     }
   ],
-  "2075": [
+  "2078": [
     {
       "from": 1,
       "divider": 1,
@@ -1111,7 +1123,7 @@
       "translation": "{0}% reduced Dexterity"
     }
   ],
-  "2076": [
+  "2079": [
     {
       "from": 1,
       "divider": 1,
@@ -1123,13 +1135,13 @@
       "translation": "{0}% reduced Strength"
     }
   ],
-  "2136": [
+  "2139": [
     {
       "divider": 1,
       "translation": "{0}% Chance to Block Spell Damage"
     }
   ],
-  "2137": [
+  "2140": [
     {
       "from": 1,
       "divider": 1,
@@ -1141,7 +1153,7 @@
       "translation": "Minions have {0}% reduced Attack Speed"
     }
   ],
-  "2138": [
+  "2141": [
     {
       "from": 1,
       "divider": 1,
@@ -1153,45 +1165,45 @@
       "translation": "Minions have {0}% reduced Cast Speed"
     }
   ],
-  "2140": [
+  "2143": [
     {
       "from": 1,
       "divider": 60,
       "translation": "Minions Regenerate {0}% of Life per second"
     }
   ],
-  "2141": [
+  "2144": [
     {
       "divider": 1,
-      "translation": "Minions have {0}% to all Elemental Resistances"
+      "translation": "Minions have +{0}% to all Elemental Resistances"
     }
   ],
-  "2142": [
+  "2145": [
     {
       "divider": 1,
-      "translation": "Minions have {0}% to Chaos Resistance"
+      "translation": "Minions have +{0}% to Chaos Resistance"
     }
   ],
-  "2178": [
+  "2181": [
     {
       "from": 1,
       "divider": 100,
       "translation": "{0}% of Chaos Damage Leeched as Life"
     }
   ],
-  "2256": [
+  "2258": [
     {
       "divider": 1,
       "translation": "{0} to {1} Added Physical Damage with Bow Attacks"
     }
   ],
-  "2258": [
+  "2260": [
     {
       "divider": 1,
       "translation": "{0} to {1} Added Fire Damage with Bow Attacks"
     }
   ],
-  "2654": [
+  "2657": [
     {
       "from": 1,
       "divider": 1,
@@ -1203,7 +1215,7 @@
       "translation": "{0}% reduced Attack Damage"
     }
   ],
-  "2709": [
+  "2713": [
     {
       "from": 1,
       "divider": 1,
@@ -1215,49 +1227,49 @@
       "translation": "{0}% reduced Duration of Elemental Ailments on Enemies"
     }
   ],
-  "2745": [
+  "2748": [
     {
       "from": 1,
       "divider": 100,
       "translation": "{0}% of Attack Damage Leeched as Life"
     }
   ],
-  "3160": [
+  "3163": [
     {
       "from": 1,
       "divider": 100,
       "translation": "{0}% of Physical Damage Leeched as Life"
     }
   ],
-  "3161": [
+  "3164": [
     {
       "from": 1,
       "divider": 100,
       "translation": "{0}% of Fire Damage Leeched as Life"
     }
   ],
-  "3162": [
+  "3165": [
     {
       "from": 1,
       "divider": 100,
       "translation": "{0}% of Cold Damage Leeched as Life"
     }
   ],
-  "3163": [
+  "3166": [
     {
       "from": 1,
       "divider": 100,
       "translation": "{0}% of Lightning Damage Leeched as Life"
     }
   ],
-  "3172": [
+  "3175": [
     {
       "from": 1,
       "divider": 100,
       "translation": "Minions Leech {0}% of Damage as Life"
     }
   ],
-  "3396": [
+  "3399": [
     {
       "from": 1,
       "divider": 1,
@@ -1269,7 +1281,7 @@
       "translation": "{0}% reduced Cooldown Recovery Rate"
     }
   ],
-  "3421": [
+  "3424": [
     {
       "from": 1,
       "divider": 1,
@@ -1281,7 +1293,7 @@
       "translation": "{0}% reduced Damage with Poison"
     }
   ],
-  "3448": [
+  "3451": [
     {
       "from": 1,
       "divider": 1,
@@ -1293,13 +1305,13 @@
       "translation": "{0}% reduced Damage per Endurance Charge"
     }
   ],
-  "3475": [
+  "3478": [
     {
       "divider": 1,
-      "translation": "{0}% Chance to Block Attack Damage if you were Damaged by a Hit Recently"
+      "translation": "+{0}% Chance to Block Attack Damage if you were Damaged by a Hit Recently"
     }
   ],
-  "3622": [
+  "3625": [
     {
       "from": 1,
       "divider": 1,
@@ -1311,7 +1323,7 @@
       "translation": "{0}% reduced Effect of Chill"
     }
   ],
-  "3623": [
+  "3626": [
     {
       "from": 1,
       "divider": 1,
@@ -1323,7 +1335,7 @@
       "translation": "{0}% reduced Effect of Shock"
     }
   ],
-  "3779": [
+  "3782": [
     {
       "from": 0,
       "to": 99,
@@ -1337,7 +1349,7 @@
       "translation": "Gain Phasing for 4 seconds on Kill"
     }
   ],
-  "3899": [
+  "3902": [
     {
       "from": 1,
       "divider": 1,
@@ -1349,7 +1361,7 @@
       "translation": "{0}% reduced effect of Non-Curse Auras from your Skills"
     }
   ],
-  "3939": [
+  "3942": [
     {
       "from": 0,
       "to": 99,
@@ -1363,14 +1375,14 @@
       "translation": "Gain an Endurance Charge on Kill"
     }
   ],
-  "4500": [
+  "4503": [
     {
       "from": 1,
       "divider": 1,
       "translation": "{0}% chance to Avoid Bleeding"
     }
   ],
-  "5033": [
+  "5035": [
     {
       "from": 1,
       "divider": 1,
@@ -1382,7 +1394,7 @@
       "translation": "{0}% reduced Projectile Attack Damage"
     }
   ],
-  "5309": [
+  "5311": [
     {
       "from": 0,
       "to": 99,
@@ -1396,14 +1408,14 @@
       "translation": "Minions Poison Enemies on Hit"
     }
   ],
-  "5361": [
+  "5363": [
     {
       "from": 1,
       "divider": 1,
       "translation": "{0}% chance to Avoid being Poisoned"
     }
   ],
-  "5623": [
+  "5625": [
     {
       "from": 1,
       "divider": 1,
@@ -1415,13 +1427,13 @@
       "translation": "{0}% reduced Warcry Buff Effect"
     }
   ],
-  "5925": [
+  "5924": [
     {
       "divider": 1,
       "translation": "{0}% chance to deal Double Damage"
     }
   ],
-  "6154": [
+  "6153": [
     {
       "from": 1,
       "divider": 1,
@@ -1433,7 +1445,7 @@
       "translation": "{0}% reduced Damage with Bleeding"
     }
   ],
-  "6160": [
+  "6159": [
     {
       "from": 1,
       "divider": 1,
@@ -1445,7 +1457,7 @@
       "translation": "{0}% reduced Fire Damage with Attack Skills"
     }
   ],
-  "6161": [
+  "6160": [
     {
       "from": 1,
       "divider": 1,
@@ -1457,7 +1469,7 @@
       "translation": "{0}% reduced Cold Damage with Attack Skills"
     }
   ],
-  "6162": [
+  "6161": [
     {
       "from": 1,
       "divider": 1,
@@ -1469,14 +1481,14 @@
       "translation": "{0}% reduced Lightning Damage with Attack Skills"
     }
   ],
-  "6199": [
+  "6198": [
     {
       "from": 1,
       "divider": 1,
       "translation": "{0}% chance to Avoid being Stunned"
     }
   ],
-  "6251": [
+  "6250": [
     {
       "from": 1,
       "divider": 1,
@@ -1488,7 +1500,7 @@
       "translation": "{0}% reduced Damage per Power Charge"
     }
   ],
-  "6426": [
+  "6425": [
     {
       "from": 1,
       "divider": 1,
@@ -1500,328 +1512,328 @@
       "translation": "{0}% reduced Effect of Non-Damaging Ailments"
     }
   ],
-  "6772": [
+  "6771": [
     {
       "divider": 1,
       "translation": "{0} to {1} Added Physical Damage with Wand Attacks"
     }
   ],
-  "6774": [
+  "6773": [
     {
       "divider": 1,
       "translation": "{0} to {1} Added Physical Damage with Dagger Attacks"
     }
   ],
-  "6776": [
+  "6775": [
     {
       "divider": 1,
       "translation": "{0} to {1} Added Physical Damage with Claw Attacks"
     }
   ],
-  "6778": [
+  "6777": [
     {
       "divider": 1,
       "translation": "{0} to {1} Added Physical Damage with Sword Attacks"
     }
   ],
-  "6780": [
+  "6779": [
     {
       "divider": 1,
       "translation": "{0} to {1} Added Physical Damage with Axe Attacks"
     }
   ],
-  "6782": [
+  "6781": [
     {
       "divider": 1,
       "translation": "{0} to {1} Added Physical Damage with Mace or Sceptre Attacks"
     }
   ],
-  "6784": [
+  "6783": [
     {
       "divider": 1,
       "translation": "{0} to {1} Added Physical Damage with Staff Attacks"
     }
   ],
-  "6786": [
+  "6785": [
     {
       "divider": 1,
       "translation": "{0} to {1} Added Lightning Damage with Dagger Attacks"
     }
   ],
-  "6788": [
+  "6787": [
     {
       "divider": 1,
       "translation": "{0} to {1} Added Lightning Damage with Claw Attacks"
     }
   ],
-  "6790": [
+  "6789": [
     {
       "divider": 1,
       "translation": "{0} to {1} Added Lightning Damage with Bow Attacks"
     }
   ],
-  "6792": [
+  "6791": [
     {
       "divider": 1,
       "translation": "{0} to {1} Added Lightning Damage with Sword Attacks"
     }
   ],
-  "6794": [
+  "6793": [
     {
       "divider": 1,
       "translation": "{0} to {1} Added Lightning Damage with Axe Attacks"
     }
   ],
-  "6796": [
+  "6795": [
     {
       "divider": 1,
       "translation": "{0} to {1} Added Lightning Damage with Mace or Sceptre Attacks"
     }
   ],
-  "6798": [
+  "6797": [
     {
       "divider": 1,
       "translation": "{0} to {1} Added Lightning Damage with Staff Attacks"
     }
   ],
-  "6800": [
+  "6799": [
     {
       "divider": 1,
       "translation": "{0} to {1} Added Fire Damage with Dagger Attacks"
     }
   ],
-  "6802": [
+  "6801": [
     {
       "divider": 1,
       "translation": "{0} to {1} Added Fire Damage with Claw Attacks"
     }
   ],
-  "6804": [
+  "6803": [
     {
       "divider": 1,
       "translation": "{0} to {1} Added Fire Damage with Sword Attacks"
     }
   ],
-  "6806": [
+  "6805": [
     {
       "divider": 1,
       "translation": "{0} to {1} Added Fire Damage with Axe Attacks"
     }
   ],
-  "6808": [
+  "6807": [
     {
       "divider": 1,
       "translation": "{0} to {1} Added Fire Damage with Mace or Sceptre Attacks"
     }
   ],
-  "6810": [
+  "6809": [
     {
       "divider": 1,
       "translation": "{0} to {1} Added Fire Damage with Staff Attacks"
     }
   ],
-  "6812": [
+  "6811": [
     {
       "divider": 1,
       "translation": "{0} to {1} Added Cold Damage with Dagger Attacks"
     }
   ],
-  "6814": [
+  "6813": [
     {
       "divider": 1,
       "translation": "{0} to {1} Added Cold Damage with Claw Attacks"
     }
   ],
-  "6816": [
+  "6815": [
     {
       "divider": 1,
       "translation": "{0} to {1} Added Cold Damage with Bow Attacks"
     }
   ],
-  "6818": [
+  "6817": [
     {
       "divider": 1,
       "translation": "{0} to {1} Added Cold Damage with Sword Attacks"
     }
   ],
-  "6820": [
+  "6819": [
     {
       "divider": 1,
       "translation": "{0} to {1} Added Cold Damage with Axe Attacks"
     }
   ],
-  "6822": [
+  "6821": [
     {
       "divider": 1,
       "translation": "{0} to {1} Added Cold Damage with Mace or Sceptre Attacks"
     }
   ],
-  "6824": [
+  "6823": [
     {
       "divider": 1,
       "translation": "{0} to {1} Added Cold Damage with Staff Attacks"
     }
   ],
-  "6830": [
+  "6829": [
     {
       "divider": 1,
       "translation": "{0} to {1} Added Spell Fire Damage while Dual Wielding"
     }
   ],
-  "6832": [
+  "6831": [
     {
       "divider": 1,
       "translation": "{0} to {1} Added Spell Cold Damage while Dual Wielding"
     }
   ],
-  "6834": [
+  "6833": [
     {
       "divider": 1,
       "translation": "{0} to {1} Added Spell Lightning Damage while Dual Wielding"
     }
   ],
-  "6836": [
+  "6835": [
     {
       "divider": 1,
       "translation": "{0} to {1} Added Spell Physical Damage while Dual Wielding"
     }
   ],
-  "6838": [
+  "6837": [
     {
       "divider": 1,
       "translation": "{0} to {1} Added Spell Chaos Damage while Dual Wielding"
     }
   ],
-  "6840": [
+  "6839": [
     {
       "divider": 1,
       "translation": "{0} to {1} Added Spell Fire Damage while wielding a Two Handed Weapon"
     }
   ],
-  "6842": [
+  "6841": [
     {
       "divider": 1,
       "translation": "{0} to {1} Added Spell Cold Damage while wielding a Two Handed Weapon"
     }
   ],
-  "6844": [
+  "6843": [
     {
       "divider": 1,
       "translation": "{0} to {1} Added Spell Lightning Damage while wielding a Two Handed Weapon"
     }
   ],
-  "6846": [
+  "6845": [
     {
       "divider": 1,
       "translation": "{0} to {1} Added Spell Physical Damage while wielding a Two Handed Weapon"
     }
   ],
-  "6848": [
+  "6847": [
     {
       "divider": 1,
       "translation": "{0} to {1} Added Spell Chaos Damage while wielding a Two Handed Weapon"
     }
   ],
-  "6850": [
+  "6849": [
     {
       "divider": 1,
       "translation": "{0} to {1} Added Spell Fire Damage while holding a Shield"
     }
   ],
-  "6852": [
+  "6851": [
     {
       "divider": 1,
       "translation": "{0} to {1} Added Spell Cold Damage while holding a Shield"
     }
   ],
-  "6854": [
+  "6853": [
     {
       "divider": 1,
       "translation": "{0} to {1} Added Spell Lightning Damage while holding a Shield"
     }
   ],
-  "6856": [
+  "6855": [
     {
       "divider": 1,
       "translation": "{0} to {1} Added Spell Physical Damage while holding a Shield"
     }
   ],
-  "6858": [
+  "6857": [
     {
       "divider": 1,
       "translation": "{0} to {1} Added Spell Chaos Damage while holding a Shield"
     }
   ],
-  "6860": [
+  "6859": [
     {
       "from": 1,
       "divider": 1,
       "translation": "{0}% increased Damage over Time while Dual Wielding"
     }
   ],
-  "6861": [
+  "6860": [
     {
       "from": 1,
       "divider": 1,
       "translation": "{0}% increased Damage over Time while wielding a Two Handed Weapon"
     }
   ],
-  "6862": [
+  "6861": [
     {
       "from": 1,
       "divider": 1,
       "translation": "{0}% increased Damage over Time while holding a Shield"
     }
   ],
-  "6863": [
+  "6862": [
     {
       "divider": 1,
       "translation": "Minions deal {0} to {1} additional Fire Damage"
     }
   ],
-  "6865": [
+  "6864": [
     {
       "divider": 1,
       "translation": "Minions deal {0} to {1} additional Cold Damage"
     }
   ],
-  "6867": [
+  "6866": [
     {
       "divider": 1,
       "translation": "Minions deal {0} to {1} additional Lightning Damage"
     }
   ],
-  "6869": [
+  "6868": [
     {
       "divider": 1,
       "translation": "Minions deal {0} to {1} additional Physical Damage"
     }
   ],
-  "6871": [
+  "6870": [
     {
       "divider": 1,
       "translation": "Minions deal {0} to {1} additional Chaos Damage"
     }
   ],
-  "6873": [
+  "6872": [
     {
       "divider": 1,
       "translation": "Minions Regenerate {0} Life per second"
     }
   ],
-  "6874": [
+  "6873": [
     {
       "divider": 1,
       "translation": "Regenerate {0} Energy Shield per second"
     }
   ],
-  "6882": [
+  "6881": [
     {
       "divider": 1,
-      "translation": "{0}% Chance to Block Spell Damage if you were Damaged by a Hit Recently"
+      "translation": "+{0}% Chance to Block Spell Damage if you were Damaged by a Hit Recently"
     }
   ],
-  "6886": [
+  "6885": [
     {
       "from": 1,
       "divider": 1,
@@ -1833,7 +1845,7 @@
       "translation": "{0}% reduced Movement Speed if you haven't taken Damage Recently"
     }
   ],
-  "6891": [
+  "6890": [
     {
       "from": 1,
       "divider": 1,
@@ -1845,20 +1857,20 @@
       "translation": "{0}% reduced Damage if you've Killed Recently"
     }
   ],
-  "6892": [
+  "6891": [
     {
       "divider": 1,
-      "translation": "{0}% to Critical Strike Multiplier if you've Killed Recently"
+      "translation": "+{0}% to Critical Strike Multiplier if you've Killed Recently"
     }
   ],
-  "6895": [
+  "6894": [
     {
       "from": 1,
       "divider": 1,
       "translation": "Damage Penetrates {0}% Elemental Resistances if you haven't Killed Recently"
     }
   ],
-  "6896": [
+  "6895": [
     {
       "from": 1,
       "divider": 1,
@@ -1870,7 +1882,7 @@
       "translation": "{0}% reduced Cast Speed if a Minion has been Killed Recently"
     }
   ],
-  "6899": [
+  "6898": [
     {
       "from": 1,
       "divider": 1,
@@ -1882,7 +1894,7 @@
       "translation": "Minions deal {0}% reduced Damage if you've used a Minion Skill Recently"
     }
   ],
-  "6902": [
+  "6901": [
     {
       "from": 1,
       "divider": 1,
@@ -1894,7 +1906,7 @@
       "translation": "{0}% reduced Evasion Rating while moving"
     }
   ],
-  "6903": [
+  "6902": [
     {
       "from": 1,
       "divider": 1,
@@ -1906,13 +1918,13 @@
       "translation": "{0}% reduced Mana Regeneration Rate while moving"
     }
   ],
-  "6904": [
+  "6903": [
     {
       "divider": 60,
       "translation": "Regenerate {0}% of Life per second while moving"
     }
   ],
-  "6906": [
+  "6905": [
     {
       "from": 1,
       "divider": 1,
@@ -1924,7 +1936,7 @@
       "translation": "{0}% reduced Attack Speed if you've dealt a Critical Strike Recently"
     }
   ],
-  "6907": [
+  "6906": [
     {
       "from": 1,
       "divider": 1,
@@ -1936,7 +1948,7 @@
       "translation": "{0}% reduced Cast Speed if you've dealt a Critical Strike Recently"
     }
   ],
-  "6908": [
+  "6907": [
     {
       "from": 1,
       "divider": 1,
@@ -1948,7 +1960,7 @@
       "translation": "{0}% reduced Critical Strike Chance if you haven't dealt a Critical Strike Recently"
     }
   ],
-  "6909": [
+  "6908": [
     {
       "from": 1,
       "divider": 1,
@@ -1960,7 +1972,7 @@
       "translation": "Minions have {0}% reduced Attack and Cast Speed if you or your Minions have Killed Recently"
     }
   ],
-  "6912": [
+  "6911": [
     {
       "from": 0,
       "to": 99,
@@ -1974,7 +1986,7 @@
       "translation": "Blind Enemies on Hit with Attacks"
     }
   ],
-  "6913": [
+  "6912": [
     {
       "from": 0,
       "to": 99,
@@ -1988,7 +2000,7 @@
       "translation": "Taunt Enemies on Hit with Attacks"
     }
   ],
-  "6914": [
+  "6913": [
     {
       "from": 0,
       "to": 99,
@@ -2002,7 +2014,7 @@
       "translation": "Hinder Enemies on Hit with Spells"
     }
   ],
-  "6915": [
+  "6914": [
     {
       "from": 0,
       "to": 99,
@@ -2016,7 +2028,7 @@
       "translation": "Minions Blind on Hit with Attacks"
     }
   ],
-  "6916": [
+  "6915": [
     {
       "from": 0,
       "to": 99,
@@ -2030,7 +2042,7 @@
       "translation": "Minions Taunt on Hit with Attacks"
     }
   ],
-  "6917": [
+  "6916": [
     {
       "from": 0,
       "to": 99,
@@ -2044,13 +2056,13 @@
       "translation": "Minions Hinder Enemies on Hit with Spells"
     }
   ],
-  "6919": [
+  "6918": [
     {
       "divider": 1,
       "translation": "{0}% additional Physical Damage Reduction if you weren't Damaged by a Hit Recently"
     }
   ],
-  "7628": [
+  "7627": [
     {
       "from": 1,
       "to": 1,
@@ -2101,14 +2113,14 @@
       "translation": "{0}% reduced Impale Effect"
     }
   ],
-  "8985": [
+  "8984": [
     {
       "from": 1,
       "divider": 100,
       "translation": "{0}% of Spell Damage Leeched as Energy Shield"
     }
   ],
-  "9041": [
+  "9040": [
     {
       "from": 1,
       "divider": 1,
@@ -2120,141 +2132,147 @@
       "translation": "Curse Skills have {0}% reduced Skill Effect Duration"
     }
   ],
-  "9223": [
+  "9221": [
     {
+      "from": 1,
       "divider": 1,
-      "translation": "Poisons you inflict deal Damage {0}% faster"
+      "translation": "Poisons you inflict deal Damage {0}% Faster"
+    },
+    {
+      "to": -1,
+      "divider": 1,
+      "translation": "Poisons you inflict deal Damage {0}% Slower"
     }
   ],
-  "9224": [
+  "9222": [
     {
       "divider": 1,
-      "translation": "Bleeding you inflict deals Damage {0}% faster"
+      "translation": "Bleeding you inflict deals Damage {0}% Faster"
     }
   ],
-  "9531": [
+  "9527": [
     {
       "divider": 1,
       "translation": "Inner Conviction"
     }
   ],
-  "9541": [
+  "9537": [
     {
       "divider": 1,
       "translation": "Eternal Youth"
     }
   ],
-  "9583": [
+  "9579": [
     {
       "divider": 1,
       "translation": "Corrupted Soul"
     }
   ],
-  "9584": [
+  "9580": [
     {
       "divider": 1,
       "translation": "The Agnostic"
     }
   ],
-  "9585": [
+  "9581": [
     {
       "divider": 1,
       "translation": "Divine Flesh"
     }
   ],
-  "9714": [
+  "9710": [
     {
       "divider": 1,
       "translation": "Glancing Blows"
     }
   ],
-  "9723": [
+  "9719": [
     {
       "divider": 1,
       "translation": "Supreme Decadence"
     }
   ],
-  "9759": [
+  "9755": [
     {
       "translation": "+{0} to Devotion"
     }
   ],
-  "9767": [
+  "9763": [
     {
       "divider": 1,
       "translation": "Wind Dancer"
     }
   ],
-  "9849": [
+  "9845": [
     {
       "from": 1,
       "divider": 1,
       "translation": "{0}% of Physical Damage Converted to Fire Damage while you have at least 150 Devotion"
     }
   ],
-  "9850": [
+  "9846": [
     {
       "from": 1,
       "divider": 1,
       "translation": "{0}% of Physical Damage Converted to Cold Damage while you have at least 150 Devotion"
     }
   ],
-  "9851": [
+  "9847": [
     {
       "from": 1,
       "divider": 1,
       "translation": "{0}% of Physical Damage Converted to Lightning Damage while you have at least 150 Devotion"
     }
   ],
-  "9852": [
+  "9848": [
     {
       "divider": 1,
       "translation": "Gain {0}% of Maximum Mana as Extra Maximum Energy Shield while you have at least 150 Devotion"
     }
   ],
-  "9853": [
+  "9849": [
     {
       "divider": 1,
       "translation": "Gain Arcane Surge on Hit with Spells if you have at least 150 Devotion"
     }
   ],
-  "9854": [
+  "9850": [
     {
       "divider": 1,
-      "translation": "{0} to Minimum Endurance Charges while you have at least 150 Devotion"
+      "translation": "+{0} to Minimum Endurance Charges while you have at least 150 Devotion"
     }
   ],
-  "9855": [
+  "9851": [
     {
       "divider": 1,
-      "translation": "{0} to Minimum Power Charges while you have at least 150 Devotion"
+      "translation": "+{0} to Minimum Power Charges while you have at least 150 Devotion"
     }
   ],
-  "9856": [
+  "9852": [
     {
       "divider": 1,
-      "translation": "{0} to Minimum Frenzy Charges while you have at least 150 Devotion"
+      "translation": "+{0} to Minimum Frenzy Charges while you have at least 150 Devotion"
     }
   ],
-  "9857": [
+  "9853": [
     {
       "divider": 1,
       "translation": "Immune to Elemental Ailments while on Consecrated Ground if you have at least 150 Devotion"
     }
   ],
-  "9858": [
+  "9854": [
     {
       "divider": 1,
       "translation": "{0}% additional Physical Damage Reduction while you have at least 150 Devotion"
     }
   ],
-  "9859": [
+  "9855": [
     {
       "divider": 1,
-      "translation": "{0}% to all maximum Resistances if you have at least 150 Devotion"
+      "translation": "+{0}% to all maximum Resistances if you have at least 150 Devotion"
     }
   ],
-  "9860": [
+  "9856": [
     {
       "from": 0,
       "to": 99,
@@ -2268,7 +2286,7 @@
       "translation": "Inflict Fire Exposure on Hit if you have at least 150 Devotion"
     }
   ],
-  "9861": [
+  "9857": [
     {
       "from": 0,
       "to": 99,
@@ -2282,7 +2300,7 @@
       "translation": "Inflict Cold Exposure on Hit if you have at least 150 Devotion"
     }
   ],
-  "9862": [
+  "9858": [
     {
       "from": 0,
       "to": 99,
@@ -2296,13 +2314,13 @@
       "translation": "Inflict Lightning Exposure on Hit if you have at least 150 Devotion"
     }
   ],
-  "9878": [
+  "9874": [
     {
       "divider": 1,
       "translation": "Supreme Ego"
     }
   ],
-  "9910": [
+  "9906": [
     {
       "from": 0,
       "to": 99,
@@ -2316,20 +2334,20 @@
       "translation": "Inflict Withered for 2 seconds on Hit"
     }
   ],
-  "11160": [
+  "11153": [
     {
       "from": 1,
       "divider": 1,
       "translation": "Minions have {0}% chance to Ignite"
     }
   ],
-  "12061": [
+  "12056": [
     {
       "divider": 1,
       "translation": "Transcendence"
     }
   ],
-  "12221": [
+  "12216": [
     {
       "divider": 1,
       "translation": "Immortal Ambition"
@@ -2339,7 +2357,7 @@
       "translation": "Your Energy Shield starts at zero"
     }
   ],
-  "12264": [
+  "12259": [
     {
       "from": 0,
       "to": 99,
@@ -2353,7 +2371,7 @@
       "translation": "Gain Alchemist's Genius when you use a Flask"
     }
   ],
-  "12431": [
+  "12426": [
     {
       "from": 1,
       "divider": 1,
@@ -2365,7 +2383,7 @@
       "translation": "{0}% reduced Effect of Curses on you while on Consecrated Ground"
     }
   ],
-  "12433": [
+  "12428": [
     {
       "from": 1,
       "divider": 1,
@@ -2377,7 +2395,7 @@
       "translation": "Enemies Hindered by you have {0}% reduced Life Regeneration rate"
     }
   ],
-  "12435": [
+  "12430": [
     {
       "from": 1,
       "divider": 1,
@@ -2389,13 +2407,13 @@
       "translation": "Enemies Maimed by you take {0}% reduced Damage Over Time"
     }
   ],
-  "12438": [
+  "12433": [
     {
       "divider": 1,
-      "translation": "Enemies Withered by you have {0}% to all Resistances"
+      "translation": "Enemies Withered by you have +{0}% to all Resistances"
     }
   ],
-  "12439": [
+  "12434": [
     {
       "from": 1,
       "divider": 1,
@@ -2407,7 +2425,7 @@
       "translation": "Enemies Blinded by you have {0}% reduced Critical Strike Chance"
     }
   ],
-  "12440": [
+  "12435": [
     {
       "from": 1,
       "divider": 1,
@@ -2419,7 +2437,7 @@
       "translation": "Enemies Intimidated by you have {0}% reduced duration of stuns against them"
     }
   ],
-  "12602": [
+  "12597": [
     {
       "from": 1,
       "divider": 1,
@@ -2431,7 +2449,7 @@
       "translation": "{0}% reduced Effect of Cold Ailments"
     }
   ],
-  "12603": [
+  "12598": [
     {
       "from": 1,
       "divider": 1,
@@ -2443,25 +2461,25 @@
       "translation": "{0}% reduced Effect of Lightning Ailments"
     }
   ],
-  "14154": [
+  "14147": [
     {
       "divider": 1,
       "translation": "{0} to {1} Added Chaos Damage with Claw Attacks"
     }
   ],
-  "14156": [
+  "14149": [
     {
       "divider": 1,
       "translation": "{0} to {1} Added Chaos Damage with Dagger Attacks"
     }
   ],
-  "14158": [
+  "14151": [
     {
       "divider": 1,
       "translation": "{0} to {1} Added Chaos Damage with Bow Attacks"
     }
   ],
-  "14543": [
+  "14523": [
     {
       "from": 1,
       "divider": 1,
@@ -2473,7 +2491,7 @@
       "translation": "{0}% reduced Ward"
     }
   ],
-  "14548": [
+  "14528": [
     {
       "from": 1,
       "divider": 1,
@@ -2485,7 +2503,7 @@
       "translation": "{0}% slower Restoration of Ward"
     }
   ],
-  "14924": [
+  "14901": [
     {
       "from": 1,
       "divider": 1,
@@ -2497,19 +2515,19 @@
       "translation": "{0}% reduced Mana Reservation Efficiency of Skills"
     }
   ],
-  "14960": [
+  "14937": [
     {
       "divider": 1,
-      "translation": "{0}% chance to Suppress Spell Damage"
+      "translation": "+{0}% chance to Suppress Spell Damage"
     }
   ],
-  "15037": [
+  "15014": [
     {
       "divider": 1,
-      "translation": "{0} to maximum Fortification"
+      "translation": "+{0} to maximum Fortification"
     }
   ],
-  "16937": [
+  "16747": [
     {
       "from": 0,
       "to": 99,
@@ -2523,19 +2541,19 @@
       "translation": "Minions cause Bleeding with Attacks"
     }
   ],
-  "20828": [
+  "20568": [
     {
       "divider": 1,
       "translation": "Gain {0} Rage on Melee Hit"
     }
   ],
-  "21931": [
+  "21673": [
     {
       "divider": 1,
       "translation": "{0}% increased Ward from Equipped Armour Items"
     }
   ],
-  "22553": [
+  "22295": [
     {
       "from": 1,
       "divider": 1,
@@ -2547,13 +2565,13 @@
       "translation": "{0}% reduced Ward during any Flask Effect"
     }
   ],
-  "22554": [
+  "22296": [
     {
       "divider": 1,
       "translation": "{0}% chance for Ward to be Restored when you Use a Flask"
     }
   ],
-  "22555": [
+  "22297": [
     {
       "from": 1,
       "to": 1,
@@ -2566,7 +2584,7 @@
       "translation": "Gain {0} Endurance Charges when Ward Breaks"
     }
   ],
-  "22556": [
+  "22298": [
     {
       "from": 1,
       "to": 1,
@@ -2579,7 +2597,7 @@
       "translation": "Gain {0} Power Charges when Ward Breaks"
     }
   ],
-  "22557": [
+  "22299": [
     {
       "from": 1,
       "to": 1,
@@ -2592,7 +2610,7 @@
       "translation": "Gain {0} Frenzy Charges when Ward Breaks"
     }
   ],
-  "22558": [
+  "22300": [
     {
       "from": 1,
       "divider": 1,
@@ -2604,7 +2622,7 @@
       "translation": "{0}% reduced Armour while you have Unbroken Ward"
     }
   ],
-  "22559": [
+  "22301": [
     {
       "from": 1,
       "divider": 1,
@@ -2616,7 +2634,7 @@
       "translation": "{0}% reduced Evasion Rating while you have Unbroken Ward"
     }
   ],
-  "22561": [
+  "22303": [
     {
       "from": 1,
       "divider": 1,
@@ -2628,7 +2646,7 @@
       "translation": "{0} to Ward per 10 Armour on Equipped Helmet"
     }
   ],
-  "22562": [
+  "22304": [
     {
       "from": 1,
       "divider": 1,
@@ -2640,7 +2658,7 @@
       "translation": "{0} to Ward per 10 Evasion Rating on Equipped Gloves"
     }
   ],
-  "22563": [
+  "22305": [
     {
       "from": 1,
       "divider": 1,
@@ -2652,7 +2670,7 @@
       "translation": "{0} to Ward per 10 Energy Shield on Equipped Boots"
     }
   ],
-  "22564": [
+  "22306": [
     {
       "from": 1,
       "divider": 1,
@@ -2664,13 +2682,13 @@
       "translation": "{0}% reduced Damage while you have Unbroken Ward"
     }
   ],
-  "22565": [
+  "22307": [
     {
       "divider": 1,
       "translation": "Damage Penetrates {0}% Elemental Resistances while your Ward is Broken"
     }
   ],
-  "22566": [
+  "22308": [
     {
       "from": 1,
       "divider": 1,
@@ -2682,47 +2700,46 @@
       "translation": "{0}% reduced effect of Non-Curse Auras from your skills while your Ward is Broken"
     }
   ],
-  "22567": [
+  "22309": [
     {
       "divider": 1,
       "translation": "{0}% chance to Restore Ward when you Block"
     }
   ],
-  "22568": [
-    {
-      "from": 1,
-      "to": 1,
-      "divider": 1,
-      "translation": "Iron Flasks gain {0} charge when your Ward Breaks"
-    },
-    {
-      "from": 2,
-      "divider": 1,
-      "translation": "Iron Flasks gain {0} charges when your Ward Breaks"
-    }
-  ],
-  "22570": [
+  "22312": [
     {
       "divider": 1,
       "translation": "Remove a random Damaging Ailment when Ward is Restored"
     }
   ],
-  "22577": [
+  "22319": [
     {
       "divider": 1,
       "translation": "Black Scythe Training"
     }
   ],
-  "22578": [
+  "22320": [
     {
       "divider": 1,
       "translation": "Celestial Mathematics"
     }
   ],
-  "22579": [
+  "22321": [
     {
       "divider": 1,
       "translation": "The Unbreaking Circle"
+    }
+  ],
+  "23104": [
+    {
+      "from": 1,
+      "divider": 1,
+      "translation": "Iron Flasks applied to you have {0}% increased Effect"
+    },
+    {
+      "to": -1,
+      "divider": 1,
+      "translation": "Iron Flasks applied to you have {0}% reduced Effect"
     }
   ]
 }
