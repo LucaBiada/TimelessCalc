@@ -2,7 +2,8 @@
   import type { JewelGroupResult, Node } from "$lib/types";
   import { searchStore } from "$lib/stores/searchStore";
   import { treeStore } from "$lib/stores/treeStore";
-  import { jewelTypes } from "$lib/constants/timeless";
+  import { jewelTypes, jewelVisuals } from "$lib/constants/timeless";
+  import JewelIcon from "$lib/ui/common/JewelIcon.svelte";
   import { canvas } from "$lib/canvas/canvasContext";
   import { centerOnSocket } from "$lib/canvas/utils/coordinate";
   import { findNearbyKeystone } from "$lib/utils/formatters";
@@ -105,15 +106,19 @@
 {#snippet jewelRow(group: JewelGroupResult)}
   {@const open = openKey === keyOf(group)}
   {@const empty = group.totalResults === 0}
-  <div class="rounded-md border {open ? 'border-line-strong' : 'border-line'}">
+  <div
+    class="rounded-md border border-l-[3px] overflow-hidden {open ? 'border-line-strong' : 'border-line'}"
+    style="border-left-color: {jewelVisuals[group.jewelType.name].color}"
+  >
     <button
       type="button"
-      class="w-full flex items-center gap-2 px-3 py-2.5 text-left transition-colors {empty ? 'cursor-default' : 'cursor-pointer hover:bg-hover'} {open ? 'bg-raised' : ''}"
+      class="w-full flex items-center gap-2 px-3 py-2 text-left transition-colors {empty ? 'cursor-default' : 'cursor-pointer hover:bg-hover'} {open ? 'bg-raised' : ''}"
       aria-expanded={open}
       disabled={empty}
       onclick={() => toggleGroup(group)}
     >
       {@render chevron(open, empty)}
+      <JewelIcon name={group.jewelType.name} size={22} decorative />
       <span class="flex-1 text-sm font-medium {empty ? 'text-ink-muted' : 'text-ink'}">{group.jewelType.label}</span>
       <span class="text-xs text-ink-faint">{summary(group)}</span>
     </button>

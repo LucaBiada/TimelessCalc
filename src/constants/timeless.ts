@@ -57,3 +57,16 @@ export const conquerors = {
         { label: "Medved", id: 4, keystone: "Celestial Mathematics", type: "kalguur"},
 	]
 } as Record<string, Conqueror[]>;
+
+/**
+ * Icon (game item art, public/assets/jewels) and identity colour per jewel, keyed by jewel name.
+ * Colours are sampled from each icon and spread apart so all six stay distinct on the dark panel.
+ */
+export const jewelVisuals: Record<string, { icon: string; color: string }> = {
+	vaal: { icon: "./assets/jewels/vaal.png", color: "#e0533f" },
+	karui: { icon: "./assets/jewels/karui.png", color: "#e8903a" },
+	maraketh: { icon: "./assets/jewels/maraketh.png", color: "#d4cc45" },
+	templar: { icon: "./assets/jewels/templar.png", color: "#4cbf68" },
+	eternal: { icon: "./assets/jewels/eternal.png", color: "#b9bec8" },
+	kalguur: { icon: "./assets/jewels/kalguur.png", color: "#5b8fe6" },
+};

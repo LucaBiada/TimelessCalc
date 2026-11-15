@@ -1,12 +1,12 @@
 <script lang="ts">
-  import { jewelTypes } from "$lib/constants/timeless";
+  import { jewelTypes, jewelVisuals } from "$lib/constants/timeless";
   import type { JewelType } from "$lib/types";
   import { loadJewel, cache } from "$lib/providers/jewels";
   import { setJewelLoadError } from "$lib/stores/searchStore";
   import { searchStore } from "$lib/stores/searchStore";
   import { treeStore } from "$lib/stores/treeStore";
   import { get } from "svelte/store";
-  import RadioButton from "$lib/ui/common/RadioButton.svelte";
+  import JewelIcon from "$lib/ui/common/JewelIcon.svelte";
 
   interface Props {
     jewelType: JewelType | null;
@@ -73,34 +73,48 @@
 <div class="text-xs font-medium text-ink-muted mb-2">Jewel</div>
 <div class="grid grid-cols-3 gap-1.5">
   {#each jewelTypes as jewel (jewel.name)}
-    <RadioButton
-      _value={jewel}
-      label={jewel.label}
-      isSelected={!$searchStore.allJewels && jewelType?.name === jewel.name}
+    {@const selected = !$searchStore.allJewels && jewelType?.name === jewel.name}
+    {@const color = jewelVisuals[jewel.name].color}
+    <button
+      type="button"
+      aria-pressed={selected}
       onclick={() => {
         searchStore.update((s) => ({ ...s, allJewels: false, allJewelResults: null }));
         jewelType = jewel;
       }}
-    />
+      class="flex flex-col items-center gap-1 px-2 pt-2 pb-1.5 rounded-md border text-[13px] leading-tight text-center cursor-pointer transition-colors {selected
+        ? 'text-ink font-medium'
+        : 'border-line bg-raised text-ink-muted hover:text-ink hover:border-line-strong'}"
+      style={selected ? `border-color: ${color}; background: color-mix(in srgb, ${color} 14%, transparent)` : undefined}
+    >
+      <JewelIcon name={jewel.name} size={32} decorative />
+      {jewel.label}
+    </button>
   {/each}
-  <div class="col-span-3">
-    <RadioButton
-      _value="all"
-      label="All jewels"
-      hint="Search every jewel type at once (stat search only)"
-      isSelected={!!$searchStore.allJewels}
-      size="sm"
-      onclick={() => {
-        searchStore.update((s) => ({
-          ...s,
-          allJewels: true,
-          allJewelResults: null,
-          conqueror: null,
-          mode: "stats",
-          seedSearched: false,
-        }));
-        jewelType = null;
-      }}
-    />
-  </div>
+  <button
+    type="button"
+    aria-pressed={!!$searchStore.allJewels}
+    title="Search every jewel type at once (stat search only)"
+    onclick={() => {
+      searchStore.update((s) => ({
+        ...s,
+        allJewels: true,
+        allJewelResults: null,
+        conqueror: null,
+        mode: "stats",
+        seedSearched: false,
+      }));
+      jewelType = null;
+    }}
+    class="col-span-3 flex items-center justify-center gap-2 px-2 py-1.5 rounded-md border text-[13px] cursor-pointer transition-colors {$searchStore.allJewels
+      ? 'border-gold bg-gold-soft text-ink font-medium'
+      : 'border-line bg-raised text-ink-muted hover:text-ink hover:border-line-strong'}"
+  >
+    <span class="flex -space-x-0.5" aria-hidden="true">
+      {#each jewelTypes as jewel (jewel.name)}
+        <JewelIcon name={jewel.name} size={18} decorative />
+      {/each}
+    </span>
+    All jewels
+  </button>
 </div>

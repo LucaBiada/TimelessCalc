@@ -4,6 +4,7 @@
   import { filterStats } from "$lib/utils/sidebar/sidebarUtils";
   import { getStatsOptions, getAllStatsOptions } from "$lib/utils/sidebar/options";
   import { jewelTypes } from "$lib/constants/timeless";
+  import JewelIcon from "$lib/ui/common/JewelIcon.svelte";
   import jewelStatsJson from "$lib/data/jewelstats.json" with { type: "json" };
   import { translations } from "$lib/providers/translations";
 
@@ -45,12 +46,9 @@
 
   let isGloriousVanity = $derived(jewelType?.name === "vaal");
 
-  // In "All" mode, show which jewels can roll each stat; the others ignore it.
-  function jewelsWithStat(statKey: number): string {
-    const names = jewelTypes
-      .filter((j) => jewelStats[j.name]?.includes(statKey))
-      .map((j) => j.label);
-    return names.length === jewelTypes.length ? "All jewels" : names.join(", ");
+  // In "All" mode, show which jewels can roll each stat (as icons); the others ignore it.
+  function jewelsWithStat(statKey: number): string[] {
+    return jewelTypes.filter((j) => jewelStats[j.name]?.includes(statKey)).map((j) => j.name);
   }
   let minLabel = $derived.by(() =>
     $searchStore.statSearchMode === "occurrences" ? "Min. nodes" : "Min. value",
@@ -161,6 +159,18 @@
   }
 </script>
 
+{#snippet jewelMarks(statKey: number, size = 16)}
+  {@const names = jewelsWithStat(statKey)}
+  <span
+    class="flex items-center gap-0.5 shrink-0"
+    aria-label="Rolls on: {names.map((n) => jewelTypes.find((j) => j.name === n)?.label).join(', ')}"
+  >
+    {#each names as name (name)}
+      <JewelIcon {name} {size} />
+    {/each}
+  </span>
+{/snippet}
+
 <svelte:window
   onresize={() => showDropdown && fitList()}
   onkeydown={(e) => browserOpen && e.key === "Escape" && (browserOpen = false)}
@@ -199,10 +209,11 @@
     <div class="flex-1 overflow-y-auto custom-scrollbar py-1">
       {#each filteredStats as stat (stat.statKey)}
         <button
-          class="w-full px-4 py-2 text-left text-sm text-ink hover:bg-hover cursor-pointer transition-colors"
+          class="w-full flex items-center gap-3 px-4 py-2 text-left text-sm text-ink hover:bg-hover cursor-pointer transition-colors"
           onclick={() => selectStat(stat, true)}
         >
-          {stat.label}
+          <span class="flex-1">{stat.label}</span>
+          {#if $searchStore.allJewels}{@render jewelMarks(stat.statKey)}{/if}
         </button>
       {:else}
         <p class="px-4 py-3 text-sm text-ink-faint">
@@ -263,13 +274,14 @@
         {#if filteredStats.length > 0}
           {#each filteredStats as stat (stat.statKey)}
             <button
-              class="w-full px-3 py-2 text-left text-sm text-ink hover:bg-hover cursor-pointer transition-colors"
+              class="w-full flex items-center gap-3 px-3 py-2 text-left text-sm text-ink hover:bg-hover cursor-pointer transition-colors"
               onmousedown={(e) => {
                 e.preventDefault();
                 selectStat(stat);
               }}
             >
-              {stat.label}
+              <span class="flex-1">{stat.label}</span>
+              {#if $searchStore.allJewels}{@render jewelMarks(stat.statKey)}{/if}
             </button>
           {/each}
         {:else}
@@ -318,7 +330,7 @@
             </button>
           </div>
           {#if $searchStore.allJewels}
-            <div class="mt-0.5 text-xs text-ink-faint">{jewelsWithStat(stat.statKey)}</div>
+            <div class="mt-1">{@render jewelMarks(stat.statKey, 18)}</div>
           {/if}
           <div class="mt-2 flex items-center gap-3 text-xs text-ink-muted">
             {#if !stat.exclude}
