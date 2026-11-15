@@ -157,6 +157,7 @@ export interface JewelGroupResult {
   bestScore: number;
   /** Selected stats this jewel can roll; the others are ignored for it. */
   usableStatKeys: number[];
+  socket: Node;
 }
 
 export interface SearchStore {
@@ -218,6 +219,10 @@ export interface FavoriteEntry extends SearchHistoryEntry {
 
 export interface TreeStore {
   chosenSocket: Node | null;
+  /** All sockets being compared, in pick order (see utils/sockets.ts). */
+  pickedSockets?: Node[];
+  /** "Compare sockets" switch: socket clicks add/remove instead of replacing. */
+  compareMode?: boolean;
   allocated: Map<string, Node>;
   locked: Map<string, Node>;
   search: string;

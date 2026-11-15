@@ -2,6 +2,7 @@
 import { onMount } from "svelte";
 import { Canvas, Layer } from "svelte-canvas";
 import { canvas } from "$lib/canvas/canvasContext";
+import { getPickedSockets, socketNodeIds } from "$lib/utils/sockets";
 import { centerOnSocket } from "$lib/canvas/utils/coordinate";
 import { buildSkillIndex } from "$lib/utils/nodeUtils";
 import { distance, toCanvasCoords, type Point } from "$lib/canvas/utils/coordinate";
@@ -179,12 +180,34 @@ function handleClick(event: MouseEvent) {
 function handleNodeClick(node: Node, event: MouseEvent) {
 	const { chosenSocket } = cachedTreeState;
 	const isCtrlClick = event.ctrlKey || event.metaKey;
+	const picked = getPickedSockets(cachedTreeState);
+
+	// Shift+click (or the "Compare sockets" switch) adds or removes a socket.
+	if (node.isJewelSocket && chosenSocket && (event.shiftKey || cachedTreeState.compareMode)) {
+		cleanupSeedModifications();
+		treeStore.update((s) => {
+			if (picked.some((p) => p.skill === node.skill)) {
+				const rest = picked.filter((p) => p.skill !== node.skill);
+				s.pickedSockets = rest;
+				if (s.chosenSocket?.skill === node.skill) s.chosenSocket = rest[0] ?? null;
+				if (!s.chosenSocket) {
+					s.allocated = new Map();
+					s.locked = new Map();
+				}
+			} else {
+				s.pickedSockets = [...picked, node];
+			}
+			return s;
+		});
+		return;
+	}
 
 	if (node.isJewelSocket) {
-		if (chosenSocket?.skill === node.skill) {
+		if (chosenSocket?.skill === node.skill && picked.length === 1) {
 			cleanupSeedModifications();
 			treeStore.update((s) => {
 				s.chosenSocket = null;
+				s.pickedSockets = [];
 				s.allocated = new Map();
 				s.locked = new Map();
 				return s;
@@ -193,6 +216,7 @@ function handleNodeClick(node: Node, event: MouseEvent) {
 			cleanupSeedModifications();
 			treeStore.update((s) => {
 				s.chosenSocket = node;
+				s.pickedSockets = [node];
 				// Start empty; the sidebar's All/Notable/Small buttons select nodes in bulk.
 				s.allocated = new Map();
 				s.locked = new Map();
@@ -201,10 +225,9 @@ function handleNodeClick(node: Node, event: MouseEvent) {
 		}
 	} else if (chosenSocket) {
 		const nodeId = node.skill.toString();
-		const socketNodes =
-			canvas.treeData.socketNodes[chosenSocket.skill];
+		const socketNodes = socketNodeIds(picked, canvas.treeData);
 
-		if (socketNodes?.includes(nodeId)) {
+		if (socketNodes.includes(nodeId)) {
 			if (isCtrlClick) {
 				treeStore.update((s) => {
 					if (s.locked.has(nodeId)) {
@@ -339,6 +362,7 @@ const render = ({ context, width, height }: RenderParams) => {
 	const start = performance.now();
 	const { offsetX, offsetY, scaling } = canvas.state;
 	const { chosenSocket, allocated, locked } = cachedTreeState;
+	const pickedSockets = getPickedSockets(cachedTreeState);
 	const drawScale = 2 / scaling;
 	const invScaling = 1 / scaling;
 	const lineWidth = 4 * invScaling;
@@ -530,7 +554,7 @@ const render = ({ context, width, height }: RenderParams) => {
 		if (node.isJewelSocket) {
 			if (node.expansionJewel?.parent) continue;
 
-			const isSelected = chosenSocket?.skill === node.skill;
+			const isSelected = pickedSockets.some((p) => p.skill === node.skill);
 			const type = node.expansionJewel
 				? isSelected
 					? TREE_CONSTANTS.SPRITES.CLUSTER_ACTIVE
@@ -672,8 +696,8 @@ const render = ({ context, width, height }: RenderParams) => {
 		drawLockIcon(context, pos.x, pos.y, scaling);
 	}
 
-	if (chosenSocket) {
-		const socketPos = getCachedPos(chosenSocket);
+	// Every picked socket gets a radius; the active one is drawn at full strength.
+	if (pickedSockets.length > 0) {
 		const radiusSprite = canvas.spriteConfig.get(
 			TREE_CONSTANTS.SPRITES.JEWEL_RADIUS,
 		);
@@ -715,8 +739,11 @@ const render = ({ context, width, height }: RenderParams) => {
 		const ratio = radiusCoords1.w / 2;
 		const radiusDrawScale = jewelRadius / ratio * invScaling;
 
+		for (const socket of pickedSockets) {
+		const socketPos = getCachedPos(socket);
+		const isActive = socket.skill === chosenSocket?.skill;
 		context.save();
-		context.globalAlpha = TREE_CONSTANTS.SOCKET.OPACITY;
+		context.globalAlpha = TREE_CONSTANTS.SOCKET.OPACITY * (isActive || pickedSockets.length === 1 ? 1 : 0.45);
 
 		context.drawImage(
 			radiusImage,
@@ -745,6 +772,7 @@ const render = ({ context, width, height }: RenderParams) => {
 		}
 
 		context.restore();
+		}
 	}
 
 	if (canvas.state.highlightedStatKeys) {

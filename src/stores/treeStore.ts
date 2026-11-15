@@ -3,6 +3,8 @@ import type { Node } from "$lib/types";
 
 export const treeStore = writable({
 	chosenSocket: null as Node | null,
+	pickedSockets: [] as Node[],
+	compareMode: false,
 	allocated: new Map<string, Node>(),
 	locked: new Map<string, Node>(),
 	search: "" as string,

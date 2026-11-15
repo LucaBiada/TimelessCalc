@@ -130,6 +130,7 @@ export function loadConfiguration(entry: BaseEntry): void {
 		}
 
 		store.chosenSocket = entry.socket as TreeNode | null;
+		store.pickedSockets = store.chosenSocket ? [store.chosenSocket] : [];
 		store.allocated = allocated;
 		store.locked = locked;
 

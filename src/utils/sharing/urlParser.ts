@@ -236,6 +236,7 @@ export async function parseUrlAndInitialize(
 
 	treeStore.update((t) => {
 		t.chosenSocket = chosenSocket;
+		t.pickedSockets = [chosenSocket];
 		t.allocated = allocated;
 		t.locked = locked;
 		t.search = "";

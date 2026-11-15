@@ -8,9 +8,9 @@ import type {
   JewelEntry,
   JewelGroupResult,
   StatsResults,
+  Conqueror,
   Node as TreeNode,
 } from "$lib/types";
-import { jewelTypes, conquerors } from "$lib/constants/timeless";
 import { searchStore } from "$lib/stores/searchStore";
 import { get } from "svelte/store";
 import { tick } from "svelte";
@@ -299,6 +299,7 @@ export async function handleStatsSearch(
 function computeStatsSearch(
   jewelData: Record<number, JewelEntry>,
   selectedStats: Stat[],
+  socketNodeIds?: string[],
 ): { grouped: StatsResults; orderedSeeds: number[]; statKeys: number[] } {
   const results: Record<
     number,
@@ -309,7 +310,10 @@ function computeStatsSearch(
   > = {};
 
   const treeState = get(treeStore);
-  const lockedNodes = treeState.locked;
+  // A lock outside this socket's radius can never be satisfied, so only count locks inside it.
+  const lockedNodes = socketNodeIds
+    ? new Map([...treeState.locked].filter(([id]) => socketNodeIds.includes(id)))
+    : treeState.locked;
   const allocatedNodes = treeState.allocated;
   const selectedStatKeys = new Set(selectedStats.map((s) => s.statKey));
   const statSearchMode = get(searchStore).statSearchMode;
@@ -399,46 +403,51 @@ function computeStatsSearch(
 }
 
 /**
- * "All" jewel option: runs the stat search on every jewel type for the chosen socket.
- * Each jewel only uses the selected stats it can roll, so a stat unique to one jewel
- * doesn't empty the others. Jewels that can roll none of the wanted stats are skipped.
+ * Grouped stat search: one run per picked socket and per jewel ("All jewels" and/or
+ * several sockets). Each jewel only uses the selected stats it can roll, so a stat unique
+ * to one jewel doesn't empty the others; jewels that roll none of them are skipped.
  */
-export async function handleAllJewelsSearch(
+export async function handleGroupedSearch(
+  sockets: TreeNode[],
+  jewels: { jewelType: JewelType; conqueror: Conqueror }[],
   selectedStats: Stat[],
   jewelStats: Record<string, number[]>,
 ) {
   setSearchLoading(true);
   await tick();
 
-  const chosenSocket = get(treeStore).chosenSocket?.skill;
-  if (!chosenSocket || selectedStats.length === 0) {
+  if (sockets.length === 0 || selectedStats.length === 0) {
     setSearchNotFound();
     return;
   }
 
   const groups: JewelGroupResult[] = [];
-  for (const jewelType of jewelTypes) {
-    const rollable = new Set(jewelStats[jewelType.name] || []);
-    const usableStats = selectedStats.filter((s) => rollable.has(s.statKey));
-    if (!usableStats.some((s) => !s.exclude)) continue;
+  for (const socket of sockets) {
+    const nodeIds = canvas.treeData.socketNodes[socket.skill.toString()] ?? [];
+    for (const { jewelType, conqueror } of jewels) {
+      const rollable = new Set(jewelStats[jewelType.name] || []);
+      const usableStats = selectedStats.filter((s) => rollable.has(s.statKey));
+      if (!usableStats.some((s) => !s.exclude)) continue;
 
-    const jewelData = await loadJewelData(jewelType, String(chosenSocket));
-    if (!jewelData) continue;
+      const jewelData = await loadJewelData(jewelType, String(socket.skill));
+      if (!jewelData) continue;
 
-    const { grouped, orderedSeeds } = computeStatsSearch(jewelData, usableStats);
-    const scores = Object.keys(grouped).map(parseFloat);
-    groups.push({
-      jewelType,
-      conqueror: conquerors[jewelType.name][0],
-      statsResults: grouped,
-      orderedSeeds,
-      totalResults: orderedSeeds.length,
-      bestScore: scores.length ? Math.max(...scores) : 0,
-      usableStatKeys: usableStats.map((s) => s.statKey),
-    });
+      const { grouped, orderedSeeds } = computeStatsSearch(jewelData, usableStats, nodeIds);
+      const scores = Object.keys(grouped).map(parseFloat);
+      groups.push({
+        socket,
+        jewelType,
+        conqueror,
+        statsResults: grouped,
+        orderedSeeds,
+        totalResults: orderedSeeds.length,
+        bestScore: scores.length ? Math.max(...scores) : 0,
+        usableStatKeys: usableStats.map((s) => s.statKey),
+      });
+    }
   }
 
-  // One color per selected stat, shared by every jewel group so the tree highlights match.
+  // One color per selected stat, shared by every group so the tree highlights match.
   const statKeyColors = generateStatKeyColors(selectedStats.map((s) => s.statKey));
 
   searchStore.update((state) => {
@@ -452,6 +461,34 @@ export async function handleAllJewelsSearch(
     state.currentPage = 0;
     return state;
   });
+}
+
+/** Seed mode with several sockets: the stats one seed gives on the selected nodes, per socket. */
+export async function seedStatsPerSocket(
+  sockets: TreeNode[],
+  jewelType: JewelType,
+  seed: number,
+): Promise<{ socket: TreeNode; stats: Record<number, { count: number; total: number }> }[]> {
+  const allocated = get(treeStore).allocated;
+  const out = [];
+  for (const socket of sockets) {
+    const jewelData = await loadJewelData(jewelType, String(socket.skill));
+    const entry = jewelData ? getEntryForSeed(jewelData, seed) : null;
+    const stats: Record<number, { count: number; total: number }> = {};
+    for (const type of ["r", "a"] as const) {
+      for (const [key, nodeIds] of Object.entries(entry?.[type] ?? {})) {
+        const picked = nodeIds.filter((id) => allocated.has(id.toString())).length;
+        if (picked === 0) continue;
+        for (const { statId, value } of parseKey(key)) {
+          stats[statId] ??= { count: 0, total: 0 };
+          stats[statId].count += picked;
+          stats[statId].total += value * picked;
+        }
+      }
+    }
+    out.push({ socket, stats });
+  }
+  return out;
 }
 
 export async function handleSearch(

@@ -2,13 +2,13 @@
   import type { Node } from "$lib/types";
   import { treeStore } from "$lib/stores/treeStore";
   import { canvas } from "$lib/canvas/canvasContext";
+  import { getPickedSockets, socketNodeIds } from "$lib/utils/sockets";
 
+  // Nodes inside any picked socket's radius (one shared selection for all sockets).
   let socketNodes = $derived(
-    $treeStore.chosenSocket
-      ? canvas.treeData.socketNodes[$treeStore.chosenSocket.skill]
-          .map((id) => canvas.treeData.nodes[id])
-          .filter((n): n is Node => !!n)
-      : [],
+    socketNodeIds(getPickedSockets($treeStore), canvas.treeData)
+      .map((id) => canvas.treeData.nodes[id])
+      .filter((n): n is Node => !!n),
   );
   const isSmall = (n: Node) => !n.isNotable && !n.isMastery && !n.isKeystone && !n.isJewelSocket;
   const allIn = (nodes: Node[]) =>
@@ -30,8 +30,7 @@
     const chosenSocket = $treeStore.chosenSocket;
     if (!chosenSocket) return;
 
-    const nodes = canvas.treeData.socketNodes[chosenSocket.skill]
-      .map((id) => canvas.treeData.nodes[id])
+    const nodes = socketNodes
       .filter((n): n is Node => !!n);
 
     const allAllocated =
@@ -56,9 +55,7 @@
     const chosenSocket = $treeStore.chosenSocket;
     if (!chosenSocket) return;
 
-    const socketNodeIds = canvas.treeData.socketNodes[chosenSocket.skill];
-    const notableNodes = socketNodeIds
-      .map((id) => canvas.treeData.nodes[id])
+    const notableNodes = socketNodes
       .filter((n): n is Node => n && n.isNotable === true);
 
     const allNotableAllocated =
@@ -86,9 +83,7 @@
     const chosenSocket = $treeStore.chosenSocket;
     if (!chosenSocket) return;
 
-    const socketNodeIds = canvas.treeData.socketNodes[chosenSocket.skill];
-    const smallNodes = socketNodeIds
-      .map((id) => canvas.treeData.nodes[id])
+    const smallNodes = socketNodes
       .filter(
         (n): n is Node =>
           n &&

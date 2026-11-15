@@ -11,7 +11,7 @@
   let { ontargetposition }: Props = $props();
 </script>
 
-{#if $searchStore.statsSearched && $searchStore.allJewels}
+{#if $searchStore.statsSearched && $searchStore.allJewelResults}
   <AllJewelResults {ontargetposition} />
 {:else if $searchStore.statsSearched}
   <SearchResults {ontargetposition} />

@@ -5,7 +5,9 @@
   import { historyActions } from "$lib/stores/historyStore";
   import { conquerors } from "$lib/constants/timeless";
   import { getConquerorOptions } from "$lib/utils/sidebar/options";
-  import { handleSearch as performSearch, handleAllJewelsSearch } from "$lib/utils/sidebar/searchLogic";
+  import { handleSearch as performSearch, handleGroupedSearch } from "$lib/utils/sidebar/searchLogic";
+  import { getPickedSockets } from "$lib/utils/sockets";
+  import { jewelTypes } from "$lib/constants/timeless";
   import jewelStatsJson from "$lib/data/jewelstats.json" with { type: "json" };
   import { translations } from "$lib/providers/translations";
 
@@ -15,6 +17,7 @@
   import SeedSearch from "$lib/ui/search/SeedSearch.svelte";
   import StatsSearch from "$lib/ui/search/StatsSearch.svelte";
   import NodeToggles from "$lib/ui/search/NodeToggles.svelte";
+  import SocketPicker from "$lib/ui/search/SocketPicker.svelte";
   import Modal from "$lib/ui/common/Modal.svelte";
   import Spinner from "$lib/ui/common/Spinner.svelte";
   import {
@@ -25,8 +28,6 @@
     changeKeystone,
   } from "$lib/utils/search/resetStore";
   import { validateSocket } from "$lib/utils/socketValidation";
-  import { findNearbyKeystone } from "$lib/utils/formatters";
-  import { canvas } from "$lib/canvas/canvasContext";
 
   let seedInput: number | null = $state(null);
   let socketWarningMessage = $state("");
@@ -84,15 +85,17 @@
     }
   });
 
-  let socketName = $derived(
-    $treeStore.chosenSocket
-      ? findNearbyKeystone($treeStore.chosenSocket, canvas.treeData.nodes, canvas.treeData)
-      : "",
-  );
 
   async function handleSearch() {
-    if ($searchStore.allJewels) {
-      await handleAllJewelsSearch(
+    const sockets = getPickedSockets($treeStore);
+    // "All jewels" or several sockets: one result group per socket and jewel.
+    if ($searchStore.mode === "stats" && ($searchStore.allJewels || sockets.length > 1)) {
+      const jewels = $searchStore.allJewels
+        ? jewelTypes.map((jewelType) => ({ jewelType, conqueror: conquerors[jewelType.name][0] }))
+        : [{ jewelType: $searchStore.jewelType!, conqueror: $searchStore.conqueror! }];
+      await handleGroupedSearch(
+        sockets,
+        jewels,
         $searchStore.selectedStats,
         jewelStatsJson as Record<string, number[]>,
       );
@@ -162,9 +165,7 @@
         : ''}"
     >
       <section>
-        <div class="text-xs font-medium text-ink-muted mb-1">Socket</div>
-        <div class="text-sm text-ink">Near {socketName}</div>
-        <div class="mt-0.5 text-xs text-ink-faint">Click another socket to switch, or this one again to clear it.</div>
+        <SocketPicker />
       </section>
 
       <section>
