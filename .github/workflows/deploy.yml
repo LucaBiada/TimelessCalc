@@ -27,10 +27,6 @@ jobs:
           npm install
           npm run build
 
-      - name: Add Google Search Console Verification 🔍
-        run: |
-          echo "google-site-verification: google1172ef6a21a93386.html" > dist/google1172ef6a21a93386.html
-
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4
         with:
