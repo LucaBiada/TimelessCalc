@@ -15,6 +15,21 @@
 
   let searchValue = $state("");
   let showDropdown = $state(false);
+
+  // Docked stat panel next to the main panel (see --panel-offset in app.css).
+  let browserOpen = $state(false);
+  let browserInput: HTMLInputElement | undefined = $state();
+  $effect(() => {
+    document.documentElement.dataset.statPanel = browserOpen ? "open" : "closed";
+    if (browserOpen) browserInput?.focus();
+  });
+  $effect(() => () => {
+    document.documentElement.dataset.statPanel = "closed";
+  });
+  function toggleBrowser() {
+    browserOpen = !browserOpen;
+    showDropdown = false;
+  }
   let inputElement: HTMLInputElement;
 
   let filteredStats = $derived.by(() => {
@@ -82,7 +97,7 @@
     });
   }
 
-  function selectStat(stat: Stat) {
+  function selectStat(stat: Stat, keepFilter = false) {
     if (!$searchStore.selectedStats.some((s) => s.label === stat.label)) {
       searchStore.update((state) => {
         state.selectedStats.push({
@@ -95,11 +110,30 @@
         return state;
       });
     }
-    searchValue = "";
+    if (!keepFilter) searchValue = "";
     showDropdown = false;
   }
 
+  // The stat list opens towards the side of the input with more room (inside the panel's
+  // scroll area) and fills all of it.
+  let listMaxHeight = $state(240);
+  let openUp = $state(false);
+  const GAP = 8;
+  function fitList() {
+    if (!inputElement) return;
+    const area = (inputElement.closest(".overflow-y-auto") ?? document.documentElement).getBoundingClientRect();
+    const input = inputElement.getBoundingClientRect();
+    const below = Math.min(area.bottom, window.innerHeight) - input.bottom - GAP;
+    // Opening upward, the list sits above the whole field, label included.
+    const fieldTop = (inputElement.parentElement?.parentElement ?? inputElement).getBoundingClientRect().top;
+    const above = fieldTop - Math.max(area.top, 0) - GAP;
+    openUp = above > below;
+    listMaxHeight = Math.max(120, openUp ? above : below);
+  }
+
   function updateFilteredStats() {
+    if (browserOpen) return;
+    if (!showDropdown) fitList();
     showDropdown = true;
   }
 
@@ -127,9 +161,65 @@
   }
 </script>
 
+<svelte:window
+  onresize={() => showDropdown && fitList()}
+  onkeydown={(e) => browserOpen && e.key === "Escape" && (browserOpen = false)}
+/>
+
+{#if browserOpen}
+  <aside
+    class="fixed top-0 left-0 md:left-[var(--panel-width)] h-screen w-full md:w-[var(--stat-panel-width)] bg-panel border-r border-line z-40 flex flex-col"
+    aria-label="Add stats"
+  >
+    <header class="flex items-center gap-2 px-4 pt-4 pb-3">
+      <h2 class="flex-1 text-[15px] font-semibold text-ink">Add stats</h2>
+      <span class="text-xs text-ink-faint">{filteredStats.length} available</span>
+      <button
+        onclick={() => (browserOpen = false)}
+        class="w-8 h-8 grid place-items-center rounded-md text-ink-muted hover:text-ink hover:bg-hover cursor-pointer transition-colors"
+        aria-label="Close stat list"
+        title="Close stat list"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </header>
+    <div class="px-4 pb-3 border-b border-line">
+      <input
+        bind:this={browserInput}
+        type="text"
+        bind:value={searchValue}
+        placeholder="Filter stats"
+        aria-label="Filter stats"
+        autocomplete="off"
+        class="w-full px-3 py-2 rounded-md bg-raised border border-line text-ink placeholder-ink-faint focus:outline-none focus:border-gold transition-colors"
+      />
+    </div>
+    <div class="flex-1 overflow-y-auto custom-scrollbar py-1">
+      {#each filteredStats as stat (stat.statKey)}
+        <button
+          class="w-full px-4 py-2 text-left text-sm text-ink hover:bg-hover cursor-pointer transition-colors"
+          onclick={() => selectStat(stat, true)}
+        >
+          {stat.label}
+        </button>
+      {:else}
+        <p class="px-4 py-3 text-sm text-ink-faint">
+          {searchValue ? `No stat matches "${searchValue}"` : "All stats are already added"}
+        </p>
+      {/each}
+    </div>
+    <footer class="px-4 py-2.5 border-t border-line text-xs text-ink-faint">
+      Click a stat to add it. Added stats leave this list.
+    </footer>
+  </aside>
+{/if}
+
 <div class="space-y-4">
   <div class="relative">
     <label for="stat-search" class="block text-xs font-medium text-ink-muted mb-2">Stats you want</label>
+    <div class="relative">
     <input
       id="stat-search"
       bind:this={inputElement}
@@ -147,12 +237,28 @@
         }
       }}
       onblur={handleBlur}
-      class="w-full px-3 py-2 rounded-md bg-raised border border-line text-ink placeholder-ink-faint focus:outline-none focus:border-gold transition-colors"
+      class="w-full pl-3 pr-10 py-2 rounded-md bg-raised border border-line text-ink placeholder-ink-faint focus:outline-none focus:border-gold transition-colors"
     />
+    <button
+      type="button"
+      onclick={toggleBrowser}
+      aria-label={browserOpen ? "Close stat list" : "Show all stats in a side panel"}
+      aria-expanded={browserOpen}
+      title={browserOpen ? "Close stat list" : "Show all stats in a side panel"}
+      class="absolute right-1 top-1/2 -translate-y-1/2 w-8 h-8 grid place-items-center rounded transition-colors cursor-pointer {browserOpen
+        ? 'text-gold bg-gold-soft'
+        : 'text-ink-muted hover:text-ink hover:bg-hover'}"
+    >
+      <svg class="w-4 h-4 transition-transform {browserOpen ? 'rotate-180' : ''}" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 6l6 6-6 6" />
+      </svg>
+    </button>
+    </div>
 
     {#if showDropdown}
       <div
-        class="absolute top-full left-0 right-0 mt-1 bg-raised border border-line-strong rounded-md shadow-lg shadow-black/40 z-10 max-h-60 overflow-y-auto custom-scrollbar"
+        class="absolute {openUp ? 'bottom-full mb-1' : 'top-full mt-1'} left-0 right-0 bg-raised border border-line-strong rounded-md shadow-lg shadow-black/40 z-10 overflow-y-auto custom-scrollbar"
+        style="max-height: {listMaxHeight}px"
       >
         {#if filteredStats.length > 0}
           {#each filteredStats as stat (stat.statKey)}

@@ -29,6 +29,7 @@
   --color-danger-soft: rgb(224 105 92 / 0.12);
 
   --panel-width: 380px;
+  --stat-panel-width: 320px;
 }
 
 :root {
@@ -40,6 +41,9 @@
 @media (min-width: 768px) {
   :root[data-panel="open"] {
     --panel-offset: var(--panel-width);
+  }
+  :root[data-panel="open"][data-stat-panel="open"] {
+    --panel-offset: calc(var(--panel-width) + var(--stat-panel-width));
   }
 }
 
